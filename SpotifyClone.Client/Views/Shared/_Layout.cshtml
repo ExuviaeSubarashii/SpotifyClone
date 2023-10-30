@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SpotifyClone.Client</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SpotifyClone.Client.styles.css" asp-append-version="true" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
+</head>
+<body style="background-color:black;">
+    <div id="sidenav" class="sidenav gap-5">
+
+        <div style=" border-radius: 25px;">
+            <label><a> <i class='bx bx-home'></i>Home</a></label>
+            <br />
+            <label><a><i class='bx bx-search'></i> Search</a></label>
+        </div>
+
+        <div id="userPanel" class="userPanel">
+            <br />
+            <label><a><i class='bx bx-library'></i>Your Library</a></label>
+
+            <div class="selectionpanel">
+                <br />
+                <button>Playlists</button>
+                <button>Podcasts & Shows</button>
+                <button>Albums</button>
+            </div>
+            <div>
+                <label></label>
+                <button onclick="UnDisplay()"><i class='bx bx-search'></i> Search</button>
+                <input class="searchpl" />
+            </div>
+            <br />
+            
+            <div class="playlists">
+                @for (int i = 0; i < 10; i++)
+                {
+                    <div class="gap-5">
+                        <img src="">
+                        <header>Playlist @i</header>
+                        <header>PlayListType @i</header>
+                        <header>PlayListSongAmount @i</header>
+                        <br>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        function UnDisplay() {
+            const elements = document.getElementsByClassName("searchpl");
+
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].style.display === "none") {
+                    elements[i].style.display = "block";
+                } else {
+                    elements[i].style.display = "none";
+                }
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>
+

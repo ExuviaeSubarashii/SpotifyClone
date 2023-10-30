@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyClone.Client", "SpotifyClone.Client\SpotifyClone.Client.csproj", "{47C91ADA-EB87-489E-B06B-02E63C0EEA08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47C91ADA-EB87-489E-B06B-02E63C0EEA08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47C91ADA-EB87-489E-B06B-02E63C0EEA08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47C91ADA-EB87-489E-B06B-02E63C0EEA08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47C91ADA-EB87-489E-B06B-02E63C0EEA08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46ED17D9-CCC7-48F1-BB32-AA1AC8B37E35}
+	EndGlobalSection
+EndGlobal
