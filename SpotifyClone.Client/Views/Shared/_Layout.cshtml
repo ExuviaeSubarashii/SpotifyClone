@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SpotifyClone.Client.styles.css" asp-append-version="true" />
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body style="background-color:black;">
     <div id="sidenav" class="sidenav gap-5">
@@ -33,21 +33,13 @@
                 <input id="searchpl" />
             </div>
             <br />
-            
-            <div class="playlists">
-                @for (int i = 0; i < 10; i++)
-                {
-                    <div class="gap-5">
-                       @*  <img src="">
-                        <header>Playlist @i</header>
-                        <header>PlayListType @i</header>
-                        <header>PlayListSongAmount @i</header> *@
-                        <br>
-                    </div>
-                }
+
+            <div class="playlists" id="playlists" onload="GetUserPlayLists()">
+                <div class="gap-5">
+
+                </div>
             </div>
         </div>
-
     </div>
     <div class="container">
         <main role="main" class="pb-3">
@@ -59,9 +51,10 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/main.js" asp-append-version="true"></script>
+    <script src="~/js/user.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-        
+
 
 
     </script>

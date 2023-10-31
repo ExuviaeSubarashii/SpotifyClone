@@ -9,7 +9,6 @@ namespace SpotifyClone.Domain.Models
         public string UserEmail { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string UserName { get; set; } = null!;
-        public byte[] ProfileImage { get; set; } = null!;
         public string Followers { get; set; } = null!;
         public string Following { get; set; } = null!;
         public string UserToken { get; set; } = null!;

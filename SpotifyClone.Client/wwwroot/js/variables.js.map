@@ -1,1 +1,1 @@
-{"version":3,"file":"variables.js","sourceRoot":"","sources":["../../scripts/variables.ts"],"names":[],"mappings":"AAAA,IAAI,SAAS,GAAG,YAAY,CAAC,OAAO,CAAC,WAAW,CAAC,CAAC;AAClD,IAAI,OAAO,GAAG,6BAA6B,CAAC"}
+{"version":3,"file":"variables.js","sourceRoot":"","sources":["../../scripts/variables.ts"],"names":[],"mappings":"AAAA,IAAI,SAAS,CAAC;AACd,IAAI,OAAO,GAAG,6BAA6B,CAAC"}

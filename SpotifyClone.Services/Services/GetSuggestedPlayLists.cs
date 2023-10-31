@@ -1,4 +1,5 @@
-﻿using SpotifyClone.Domain.Dtos;
+﻿using Microsoft.EntityFrameworkCore;
+using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,17 @@ namespace SpotifyClone.Services.Services
     public class GetSuggestedPlayLists
     {
         private readonly SpotifyCloneContext _SC;
+
         public GetSuggestedPlayLists(SpotifyCloneContext SC)
         {
             _SC = SC;
         }
-        public List<SuggestedPlayListDTO> GetAll(string userToken)
+
+        public async Task<List<SuggestedPlayListDTO>> GetAllAsync(string userToken)
         {
             List<SuggestedPlayListDTO> playlistDTOs = new List<SuggestedPlayListDTO>();
 
-            var playlists = _SC.Playlists.ToList();
+            List<Playlist> playlists = await _SC.Playlists.ToListAsync();
             Random rnd = new Random();
             var randomPlaylists = playlists.OrderBy(x => rnd.Next()).Take(6).ToList();
 
@@ -28,10 +31,11 @@ namespace SpotifyClone.Services.Services
                 var result = new SuggestedPlayListDTO()
                 {
                     PlayListId = item.PlayListId,
-                    PlayListImage = item.PlayListImage,
+                    Title = item.PlayListTitle
                 };
-                playlistDTOs.Add(result); 
+                playlistDTOs.Add(result);
             }
+
             return playlistDTOs;
         }
     }

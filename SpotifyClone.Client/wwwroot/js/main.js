@@ -35,37 +35,98 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 function GetSuggestedPlayLists(userToken) {
+    if (userToken === void 0) { userToken = localStorage.getItem("userToken") || null; }
     return __awaiter(this, void 0, void 0, function () {
         var lastplayedlist_1;
         return __generator(this, function (_a) {
-            if (userToken !== null || userToken !== undefined) {
-                lastplayedlist_1 = document.getElementById("lastplayedlist");
-                fetch("".concat(baseUrl), {
-                    method: "GET"
-                })
-                    .then(function (response) {
-                    if (!response.ok) {
-                        throw new Error(response.statusText);
-                    }
-                    return response.json();
-                })
-                    .then(function (data) {
-                    if (data !== null) {
-                        data.forEach(function (item) {
-                            //div
-                            var individualBox = Object.assign(document.createElement("div"), { id: "individualBox" });
-                            //image
-                            var plImage = Object.assign(document.createElement("img"), { id: "plImage", src: "" });
-                            //playlist name
-                            var plName = Object.assign(document.createElement("h1"), { id: "plName", textContent: "".concat(item.plName) });
-                            individualBox.append(plImage);
-                            individualBox.append(plName);
-                            lastplayedlist_1.appendChild(individualBox);
-                        });
-                    }
-                });
+            switch (_a.label) {
+                case 0:
+                    if (!(userToken !== null || userToken !== undefined)) return [3 /*break*/, 2];
+                    lastplayedlist_1 = document.getElementById("lastplayedlist");
+                    return [4 /*yield*/, fetch("".concat(baseUrl, "/Playlist/GetSuggestedPlayLists"), {
+                            method: "POST",
+                            body: JSON.stringify(userToken)
+                        })
+                            .then(function (response) {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.json();
+                        })
+                            .then(function (data) {
+                            if (data !== null) {
+                                var individualBoxes = data.map(function (item) {
+                                    var individualBox = document.createElement("div");
+                                    individualBox.id = "individualBox";
+                                    var plName = document.createElement("h1");
+                                    plName.id = "plName";
+                                    plName.textContent = item.plName;
+                                    individualBox.appendChild(plName);
+                                    return individualBox;
+                                });
+                                individualBoxes.forEach(function (box) {
+                                    lastplayedlist_1.appendChild(box);
+                                });
+                            }
+                        })];
+                case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2: return [2 /*return*/];
             }
-            return [2 /*return*/];
+        });
+    });
+}
+function GetUserPlayLists(userToken) {
+    if (userToken === void 0) { userToken = localStorage.getItem("userToken") || null; }
+    return __awaiter(this, void 0, void 0, function () {
+        var playlists_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(userToken !== null || userToken !== undefined)) return [3 /*break*/, 2];
+                    playlists_1 = document.getElementById("playlists");
+                    return [4 /*yield*/, fetch("".concat(baseUrl, "/Playlist/GetUserPlayLists"), {
+                            method: "POST",
+                            body: JSON.stringify(userToken)
+                        })
+                            .then(function (response) {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.json();
+                        })
+                            .then(function (data) {
+                            if (data !== null) {
+                                var individualPlayListBox = data.map(function (item) {
+                                    var individualPlayListBox = document.createElement("div");
+                                    individualPlayListBox.id = "individualPlayListBox";
+                                    var plName = document.createElement("h1");
+                                    plName.id = "plName";
+                                    plName.textContent = item.plName;
+                                    //type
+                                    var plType = document.createElement("h1");
+                                    plType.id = "plType";
+                                    plType.textContent = item.plType;
+                                    //owner
+                                    var plOwner = document.createElement("h1");
+                                    plOwner.id = "plOwner";
+                                    plOwner.textContent = item.plOwner;
+                                    individualPlayListBox.appendChild(plName);
+                                    individualPlayListBox.appendChild(plType);
+                                    individualPlayListBox.appendChild(plOwner);
+                                    return individualPlayListBox;
+                                });
+                                individualPlayListBox.forEach(function (box) {
+                                    playlists_1.appendChild(box);
+                                });
+                            }
+                        })];
+                case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2: return [2 /*return*/];
+            }
         });
     });
 }

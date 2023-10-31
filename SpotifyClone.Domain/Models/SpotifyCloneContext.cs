@@ -42,8 +42,6 @@ namespace SpotifyClone.Domain.Models
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.PlayListImage).HasColumnType("image");
-
                 entity.Property(e => e.PlayListOwner)
                     .HasMaxLength(208)
                     .IsUnicode(false)
@@ -51,6 +49,10 @@ namespace SpotifyClone.Domain.Models
 
                 entity.Property(e => e.PlayListType)
                     .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.PlayListTitle)
+                    .HasMaxLength(15)
                     .IsUnicode(false)
                     .IsFixedLength();
             });
@@ -71,8 +73,6 @@ namespace SpotifyClone.Domain.Models
                     .HasMaxLength(60)
                     .IsUnicode(false)
                     .IsFixedLength();
-
-                entity.Property(e => e.ProfileImage).HasColumnType("image");
 
                 entity.Property(e => e.UserEmail)
                     .HasMaxLength(50)
