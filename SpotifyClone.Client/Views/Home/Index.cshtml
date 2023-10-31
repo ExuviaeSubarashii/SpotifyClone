@@ -1,22 +1,22 @@
 ﻿<style>
-    .forwardback{
-        background-color:black;
+    .forwardback {
+        background-color: black;
         color: white;
     }
 
-    .forwardback button{
-        border-radius:25px;
-        align-content:center;
-        background-color:black;
-        color:white;
-    }
-    .bomba{
+        .forwardback button {
+            border-radius: 25px;
+            align-content: center;
+            background-color: black;
+            color: white;
+        }
+
+    #individualBox {
         display: flex;
         padding: 10px;
-
     }
 
-    .lastplayedlist{
+    .lastplayedlist {
         display: flex;
         justify-content: space-between;
     }
@@ -32,38 +32,18 @@
     <div style="color:white; font-size:x-large; font-weight:bold;">
         <p id="howgood"></p>
     </div>
-   
 
-    <div class="lastplayedlist">
-        @for (int i = 0; i < 6; i++)
-        {
-            <div class="bomba">
-                <img>
-                <h1>Playlist @i</h1>
-            </div>
-        }
+
+    <div class="lastplayedlist" id="lastplayedlist">
+
     </div>
- 
 
+    @* @for (int i = 0; i < 6; i++)
+    {
+        <div id="individualBox" class="individualBox">
+            <img>
+            <h1>Playlist @i</h1>
+        </div>
+    } *@
 </div>
-
-<script>
-    function GetToday() {
-        var currentTime = new Date();
-        var currentHour = currentTime.getHours();
-        var howgood = document.getElementById("howgood");
-
-        if (currentHour >= 0 && currentHour <= 11) {
-            howgood.textContent = "Good Morning";
-            console.log("Good Morning");
-        } else if (currentHour >= 12 && currentHour <= 18) {
-            howgood.textContent = "Good Afternoon";
-            console.log("afternoon");
-        } else if (currentHour >= 19 && currentHour <= 24) {
-            howgood.textContent = "Good Evening";
-            console.log("evening")
-        }
-    }
-    window.onload = GetToday;
-</script>
 

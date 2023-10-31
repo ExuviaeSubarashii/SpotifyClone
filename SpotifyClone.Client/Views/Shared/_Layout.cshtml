@@ -30,7 +30,7 @@
             <div>
                 <label></label>
                 <button onclick="UnDisplay()"><i class='bx bx-search'></i> Search</button>
-                <input class="searchpl" />
+                <input id="searchpl" />
             </div>
             <br />
             
@@ -38,10 +38,10 @@
                 @for (int i = 0; i < 10; i++)
                 {
                     <div class="gap-5">
-                        <img src="">
+                       @*  <img src="">
                         <header>Playlist @i</header>
                         <header>PlayListType @i</header>
-                        <header>PlayListSongAmount @i</header>
+                        <header>PlayListSongAmount @i</header> *@
                         <br>
                     </div>
                 }
@@ -57,19 +57,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-        function UnDisplay() {
-            const elements = document.getElementsByClassName("searchpl");
-
-            for (let i = 0; i < elements.length; i++) {
-                if (elements[i].style.display === "none") {
-                    elements[i].style.display = "block";
-                } else {
-                    elements[i].style.display = "none";
-                }
-            }
-        }
+        
 
 
     </script>
