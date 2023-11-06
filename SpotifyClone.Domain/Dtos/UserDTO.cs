@@ -14,5 +14,6 @@ namespace SpotifyClone.Domain.Dtos
         public byte[] ProfileImage { get; set; } = null!;
         public string Followers { get; set; } = null!;
         public string Following { get; set; } = null!;
+        public string UserToken {  get; set; } = null!;
     }
 }

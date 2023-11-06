@@ -1,4 +1,5 @@
-﻿using SpotifyClone.Domain.Dtos;
+﻿using Microsoft.EntityFrameworkCore;
+using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace SpotifyClone.Services.Services
         }
         public async Task<List<PlaylistDTO>> GetAllPlayLists(string userToken)
         {
-            var user = await Task.Run(() => _SC.Users.FirstOrDefault(x => x.UserToken == userToken));
+            var user = await Task.Run(() => _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken));
 
-            var playlists = await Task.Run(() => _SC.Playlists.Where(x => x.PlayListOwner == user.Id.ToString()).ToList());
+            var playlists = await Task.Run(() => _SC.Playlists.Where(x => x.PlayListOwner == user.Id.ToString()).ToListAsync());
             if (playlists!=null)
             {
 
@@ -30,10 +31,13 @@ namespace SpotifyClone.Services.Services
                 var playlistData = playlists.ToList()[i];
                 PlaylistDTO playlist = new PlaylistDTO()
                 {
-                    PlayListId=playlistData.PlayListId,
-                    PlayListOwner=playlistData.PlayListOwner,
-                    PlayListContents=playlistData.PlayListContents,
-                    PlayListType=playlistData.PlayListType,
+                    PlayListId=playlistData.PlayListId.Trim(),
+                    PlayListOwner=user.UserName.Trim(),
+                    PlayListContents=playlistData.PlayListContents.Trim(),
+                    PlayListType=playlistData.PlayListType.Trim(),
+                    PlayListTitle=playlistData.PlayListTitle.Trim(),
+                    PlayListCount=playlistData.PlayListContents.Trim().Count()
+
                 };
                 playlistDtos.Add(playlist);
             }

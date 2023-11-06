@@ -24,26 +24,6 @@ namespace SpotifyClone.Services.Services
             }
             else { return false; }
         }
-        public UserDTO LoginWithUserName(LoginDTO loginDTO)
-        {
-            var query = _SC.Users.FirstOrDefault(x => x.UserName == loginDTO.UserName && x.Password == loginDTO.Password);
-            if (query != null)
-            {
-                var user = new UserDTO()
-                {
-                    Id = query.Id,
-                    UserEmail = query.UserName,
-                    UserName = query.UserName,
-                    Followers = query.Followers.Count().ToString(),
-                    Following = query.Following.Count().ToString()
-                };
-                return user;
-            }
-            else
-            {
-                return new UserDTO();
-            }
-        }
         public UserDTO LoginWithEmail(LoginDTO loginDTO)
         {
             var query = _SC.Users.FirstOrDefault(x => x.UserEmail == loginDTO.UserEmail && x.Password == loginDTO.Password);
@@ -52,10 +32,11 @@ namespace SpotifyClone.Services.Services
                 var user = new UserDTO()
                 {
                     Id = query.Id,
-                    UserEmail = query.UserName,
+                    UserEmail = query.UserEmail,
                     UserName = query.UserName,
                     Followers = query.Followers.Count().ToString(),
-                    Following = query.Following.Count().ToString()
+                    Following = query.Following.Count().ToString(),
+                    UserToken=query.UserToken
                 };
                 return user;
             }

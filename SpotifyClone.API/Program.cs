@@ -6,13 +6,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<SpotifyCloneContext>();
+builder.Services.AddScoped<SpotifyCloneContext>();
 builder.Services.AddScoped<UserAuthentication>();
 builder.Services.AddScoped<GetSuggestedPlayLists>();
-
+builder.Services.AddScoped<GetPlayLists>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

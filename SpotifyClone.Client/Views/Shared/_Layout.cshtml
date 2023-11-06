@@ -10,33 +10,47 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body style="background-color:black;">
-    <div id="sidenav" class="sidenav gap-5">
-        <div style=" border-radius: 25px;">
-            <label><a> <i class='bx bx-home'></i>Home</a></label>
-            <br />
-            <label><a><i class='bx bx-search'></i> Search</a></label>
+    <div class="topbar">
+        <div class="topbar-content">
+
+            <div class="forwardback">
+                <button><i class='bx bx-left-arrow-alt'></i></button>
+                <button><i class='bx bx-right-arrow-alt'></i></button>
+            </div>
+            <div style="color: white; font-size: x-large; font-weight: bold;">
+                <p id="howgood"></p>
+            </div>
+            <div id="loginbuttons" style="color:white;">
+                <button onclick="GoToThatPage(`Login`)">Login</button>
+                <button onclick="GoToThatPage(`Login`)">Register</button>
+            </div>
         </div>
+    </div>
 
-        <div id="userPanel" class="userPanel">
-            <br />
-            <label><a><i class='bx bx-library'></i>Your Library</a></label>
-
-            <div class="selectionpanel">
+    <div id="sidenav">
+        <div class="sidenav-content">
+            <div style=" border-radius: 25px;">
+                <label style="color:gray;"><a> <i class='bx bx-home'></i>Home</a></label>
                 <br />
-                <button>Playlists</button>
-                <button>Podcasts & Shows</button>
-                <button>Albums</button>
+                <label style="color:gray;"><a><i class='bx bx-search'></i> Search</a></label>
             </div>
-            <div>
-                <label></label>
-                <button onclick="UnDisplay()"><i class='bx bx-search'></i> Search</button>
-                <input id="searchpl" />
-            </div>
-            <br />
 
-            <div class="playlists" id="playlists" onload="GetUserPlayLists()">
-                <div class="gap-5">
+            <div id="userPanel" class="userPanel">
+                <br />
+                <label style="color:gray;"><a><i class='bx bx-library'></i>Your Library</a></label>
 
+                <div class="selectionpanel">
+                    <br />
+                    <button style="text-align:center;">Playlists</button>
+                    <button>Podcasts & Shows</button>
+                    <button>Albums</button>
+                </div>
+                <button style="background-color:transparent; color:gray;" onclick="UnDisplay()"><i class='bx bx-search'></i></button>
+                <input style=" border-radius: 25px; background-color:gray; color:white;" id="searchpl" />
+                <br />
+                <div class="playlists" id="playlists" onload="GetUserPlayLists()">
+                    <div class="gap-5">
+                    </div>
                 </div>
             </div>
         </div>

@@ -24,5 +24,8 @@ function UnDisplay() {
         elements.style.display = "none";
     }
 }
+function GoToThatPage(pageName) {
+    window.location.href = "/Home/".concat(pageName);
+}
 window.onload = GetToday;
 //# sourceMappingURL=app.js.map

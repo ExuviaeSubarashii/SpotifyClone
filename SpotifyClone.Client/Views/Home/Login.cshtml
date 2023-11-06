@@ -1,5 +1,51 @@
-﻿<div>
-    <input name="email" />
-    <input name="password" />
-    <button onclick="Login(document.querySelector('[name=email]').value, document.querySelector('[name=password]').value)">Login</button>
+﻿<style>
+    .centered-div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    .custom-div {
+        height: 250px;
+        width: 250px;
+        align-items: center;
+    }
+
+    .loginorregisterbutton {
+        color: black;
+        background-color: green;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div class="centered-div">
+
+    <div class="custom-div">
+        <div>
+            <button onclick="ShowOptions(this)" type="button" data-option="Login">Login</button>
+            <button onclick="ShowOptions(this)" type="button" data-option="Register">Register</button>
+        </div>
+        <div id="logindiv">
+            <br />
+            <input id="loginEmail" placeholder="Email" />
+            <br />
+            <input id="loginPassword" placeholder="Password" />
+            <br />
+            <button class="loginorregisterbutton" onclick="Login()">Login</button>
+        </div>
+
+        <div id="registerdiv" style="display:none;">
+            <br />
+            <input id="registerUserEmail" placeholder="Email" />
+            <input id="registerUserName" placeholder="userName" />
+            <input id="registerUserPassword" placeholder="Password" />
+            <input id="registerUserpasswordagain" placeholder="Password Again" />
+
+            <button class="loginorregisterbutton" onclick="Register()">Register</button>
+        </div>
+    </div>
 </div>
+

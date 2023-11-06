@@ -16,64 +16,102 @@ namespace SpotifyClone.API.Controllers
         private readonly SpotifyCloneContext _SC;
         private readonly UserAuthentication _authentication;
         private readonly GetSuggestedPlayLists _playLists;
-        public static IConfiguration? _config { get; }
+        private readonly IConfiguration _config;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
-        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists)
+        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration)
         {
             _SC = SC;
             _authentication = authentication;
             _playLists = playLists;
+            _config = configuration;
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult> Login([FromBody] LoginDTO logindto)
+        public async Task<ActionResult> Login(LoginDTO logindto)
         {
-            if (logindto.UserName != null)
-                return Ok(await Task.Run(() => _authentication.LoginWithUserName(logindto)));
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (logindto.UserEmail != null || logindto.Password != null)
+                {
+                    return Ok(await Task.Run(() => _authentication.LoginWithEmail(logindto)));
+                }
+                else
+                { return BadRequest(); }
 
-            else if (logindto.UserEmail != null)
-                return Ok(await Task.Run(() => _authentication.LoginWithEmail(logindto)));
+            }
+            catch (OperationCanceledException)
+            {
 
-            else return BadRequest();
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+           
+
         }
         [HttpPost("Register")]
-        public async Task<ActionResult> Register([FromBody] LoginDTO register)
+        public async Task<ActionResult> Register([FromBody] RegisterDTO register)
         {
-            if (register!=null)
+            try
             {
-                var doesUserExist = await Task.Run(()=>_SC.Users.Any(x => x.UserEmail == register.UserEmail));
-                if (!doesUserExist)
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (register != null)
                 {
-                    var registerUser = new User()
+                    var doesUserExist = await Task.Run(() => _SC.Users.Any(x => x.UserEmail == register.UserEmail));
+                    if (!doesUserExist)
                     {
-                        UserEmail = register.UserEmail,
-                        UserName = register.UserName,
-                        Password = register.Password,
-                        Followers = "0",
-                        Following = "0",
-                        UserToken=CreateRegisterToken(register.UserName,register.UserEmail,register.Password),
-                    };
-                    _SC.Users.Add(registerUser);
-                    return Ok();
+                        var registerUser = new User()
+                        {
+                            UserEmail = register.UserEmail,
+                            UserName = register.UserName,
+                            Password = register.UserPassword,
+                            Followers = "0",
+                            Following = "0",
+                            UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),
+                        };
+                        _SC.Users.Add(registerUser);
+                        _SC.SaveChanges();
+                        return Ok();
+                    }
+                    else
+                    {
+                        return ValidationProblem();
+                    }
                 }
                 else
                 {
-                    return ValidationProblem();
+                    return BadRequest();
                 }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return BadRequest();
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
+            
         }
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser(string userToken)
         {
-            bool isAuthed = await Task.Run(() => _authentication.IsAuthenticated(userToken));
-            if (isAuthed)
-                return Ok();
-            else
-                return NotFound();
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                bool isAuthed = await Task.Run(() => _authentication.IsAuthenticated(userToken));
+                if (isAuthed)
+                    return Ok();
+                else
+                    return NotFound();
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+            
         }
         public string CreateToken(LoginDTO request)
         {

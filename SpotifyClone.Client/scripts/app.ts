@@ -24,5 +24,8 @@ function UnDisplay() {
         elements.style.display = "none";
     }
 }
+function GoToThatPage(pageName: string) {
+    window.location.href = `/Home/${pageName}`;
+}
 
 window.onload = GetToday;

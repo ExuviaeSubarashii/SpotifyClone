@@ -46,32 +46,98 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
-.sidenav {
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.topbar {
+    background-color: #1E90FF;
+    color: white;
+    height: 40px;
+}
+
+.topbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 100%;
+}
+
+.topbar button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.title {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+#sidenav {
     resize: both;
     overflow: auto;
     height: 100%;
     width: 300px;
     position: fixed;
     z-index: 1;
-    top: 0;
+    top: 40px; /* Account for the topbar's height */
     left: 0;
     background-color: #111;
     overflow-x: hidden;
     padding-top: 20px;
-
 }
 
-    .sidenav a {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        /*font-size: 25px;*/
-        color: #818181;
-        display: block;
+.sidenav-content {
+    padding: 20px;
+}
+
+.sidenav-item a {
+    text-decoration: none;
+    color: lightblue;
+    display: block;
+    padding: 6px 8px 6px 16px;
+    transition: color 0.2s;
+}
+
+    .sidenav-item a:hover {
+        color: #f1f1f1;
     }
 
-        .sidenav a:hover {
-            color: #f1f1f1;
-        }
+.sidenav-item a {
+    margin-right: 10px;
+}
+
+.forwardback {
+    background-color: transparent;
+    color: white;
+}
+
+    .forwardback button {
+        border-radius: 25px;
+        align-content: center;
+        background-color: black;
+        color: white;
+    }
+.selectionpanel button {
+    display: block;
+}
+
+.playlists {
+    padding: 20px;
+}
+
 
 .main {
     margin-left: 160px;
@@ -84,14 +150,15 @@ button.accept-policy {
     }
 
         .sidenav a {
-            font-size: 18px;
+            font-size: 13px;
         }
 }
 .selectionpanel button {
-    background-color:black;
-    color: white;
+    width:140px;
+    background-color:transparent;
+    color:lightgray;
     border-radius: 25px;
-    align-items: center;
+    text-align: center;
 }
 .playlists {
     color: white;
