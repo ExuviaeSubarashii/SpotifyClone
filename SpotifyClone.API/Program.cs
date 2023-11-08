@@ -10,6 +10,7 @@ builder.Services.AddScoped<SpotifyCloneContext>();
 builder.Services.AddScoped<UserAuthentication>();
 builder.Services.AddScoped<GetSuggestedPlayLists>();
 builder.Services.AddScoped<GetPlayLists>();
+builder.Services.AddScoped<GetPlayListContents>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

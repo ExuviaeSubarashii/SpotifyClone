@@ -14,13 +14,17 @@ namespace SpotifyClone.API.Controllers
         private readonly SpotifyCloneContext _SC;
         private readonly GetSuggestedPlayLists _playLists;
         private readonly GetPlayLists _allplayLists;
+        private readonly GetPlayListContents _getPlayListContent;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
-        public PlaylistController(SpotifyCloneContext SC, GetSuggestedPlayLists playLists, GetPlayLists getPlayLists)
+
+        public PlaylistController(SpotifyCloneContext SC, GetSuggestedPlayLists playLists, GetPlayLists getPlayLists, GetPlayListContents getPlayListContent)
         {
             _SC = SC;
             _playLists = playLists;
             _allplayLists = getPlayLists;
+            _getPlayListContent = getPlayListContent;
+
         }
         [HttpPost("GetUserPlayLists")]
         public async Task<ActionResult> GetUserPlayLists([FromBody] string userToken)
@@ -30,7 +34,6 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(userToken))
                 {
-                    //return Ok(await Task.Run(() => _playLists.GetAllAsync(userToken)));
                     return Ok(await Task.Run(() => _allplayLists.GetAllPlayLists(userToken)));
                 }
                 else
@@ -55,6 +58,29 @@ namespace SpotifyClone.API.Controllers
                 if (!string.IsNullOrEmpty(userToken))
                 {
                     List<SuggestedPlayListDTO> suggestedPlaylists = await _playLists.GetAllAsync(userToken);
+                    return Ok(suggestedPlaylists);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+        }
+        [HttpPost("GetPlaylistContents")]
+        public async Task<ActionResult> GetPlaylistContents([FromBody]string playlistId)
+        {
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (!string.IsNullOrEmpty(playlistId))
+                {
+                    List<PlayListContents> suggestedPlaylists = await _getPlayListContent.GetAllPlayListContents(playlistId);
                     return Ok(suggestedPlaylists);
                 }
                 else

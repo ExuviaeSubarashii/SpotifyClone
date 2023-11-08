@@ -18,6 +18,7 @@ namespace SpotifyClone.Domain.Models
 
         public virtual DbSet<Playlist> Playlists { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Songs> Songs { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -89,6 +90,23 @@ namespace SpotifyClone.Domain.Models
                     .IsUnicode(false)
                     .IsFixedLength();
             });
+            modelBuilder.Entity<Songs>(entity =>
+            {
+                entity.Property(e => e.SongName)
+                    .HasMaxLength(35)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.DateAdded)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.Duration)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.Id)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+            });
+
 
             OnModelCreatingPartial(modelBuilder);
         }
