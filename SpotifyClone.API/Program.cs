@@ -11,6 +11,7 @@ builder.Services.AddScoped<UserAuthentication>();
 builder.Services.AddScoped<GetSuggestedPlayLists>();
 builder.Services.AddScoped<GetPlayLists>();
 builder.Services.AddScoped<GetPlayListContents>();
+builder.Services.AddScoped<SongsService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

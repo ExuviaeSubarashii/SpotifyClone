@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpotifyClone.Domain.Models
+namespace SpotifyClone.Domain.Dtos
 {
-    public partial class Songs
+    public class CurrentSongDTO
     {
         public int Id { get; set; }
         public string SongName { get; set; } = null!;
         public DateTime DateAdded { get; set; }
         public int Duration { get; set; }
-        public string SongArtist {  get; set; }=null!;
-        public string AlbumName {  get; set; }=null!;
+        public string SongArtist { get; set; } = null!;
+        public string AlbumName { get; set; } = null!;
+
     }
 }

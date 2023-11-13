@@ -105,6 +105,14 @@ namespace SpotifyClone.Domain.Models
                 entity.Property(e => e.Id)
                     .IsUnicode(false)
                     .IsFixedLength();
+                entity.Property(e => e.SongArtist)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.AlbumName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .IsFixedLength();
             });
 
 

@@ -37,7 +37,9 @@ namespace SpotifyClone.Services.Services
                     SongId = idk.Id,
                     DateAdded=idk.DateAdded,
                     Duration=idk.Duration,
-                    SongName=idk.SongName
+                    SongName=idk.SongName,
+                    SongArtist=idk.SongArtist,
+                    AlbumName = idk.AlbumName,
                 };
                 playListContentsDtos.Add(result);
             }

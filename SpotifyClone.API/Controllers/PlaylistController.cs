@@ -27,19 +27,39 @@ namespace SpotifyClone.API.Controllers
 
         }
         [HttpPost("GetUserPlayLists")]
-        public async Task<ActionResult> GetUserPlayLists([FromBody] string userToken)
+        public async Task<ActionResult> GetUserPlayLists([FromBody] PlaylistRequestDTO request)
         {
             try
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                if (!string.IsNullOrEmpty(userToken))
+                if (!string.IsNullOrEmpty(request.UserToken))
                 {
-                    return Ok(await Task.Run(() => _allplayLists.GetAllPlayLists(userToken)));
+                    //playlist
+                    if (string.IsNullOrEmpty(request.PlayListType))
+                    {
+                        return Ok(await Task.Run(() => _allplayLists.GetAllPlayLists(request.UserToken)));
+                    }
+
+                    //podcast & show
+                    if (request.PlayListType == "Podcast")
+                    {
+                        return Ok(await Task.Run(() => _allplayLists.GetPodCastAndShows(request.UserToken,request.PlayListType)));
+                    }
+                    //albums
+                    if (request.PlayListType == "Albums")
+                    {
+                        return Ok(await Task.Run(() => _allplayLists.GetAlbums(request.UserToken,request.PlayListType)));
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
                 else
                 {
                     return BadRequest();
                 }
+
             }
             catch (OperationCanceledException)
             {
@@ -50,7 +70,7 @@ namespace SpotifyClone.API.Controllers
 
         }
         [HttpPost("GetSuggestedPlayLists")]
-        public async Task<ActionResult> GetSuggestedPlayLists([FromBody]string userToken)
+        public async Task<ActionResult> GetSuggestedPlayLists([FromBody] string userToken)
         {
             try
             {
@@ -73,7 +93,7 @@ namespace SpotifyClone.API.Controllers
             }
         }
         [HttpPost("GetPlaylistContents")]
-        public async Task<ActionResult> GetPlaylistContents([FromBody]string playlistId)
+        public async Task<ActionResult> GetPlaylistContents([FromBody] string playlistId)
         {
             try
             {
