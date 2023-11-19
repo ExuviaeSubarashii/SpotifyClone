@@ -16,16 +16,18 @@ namespace SpotifyClone.API.Controllers
         private readonly SpotifyCloneContext _SC;
         private readonly UserAuthentication _authentication;
         private readonly GetSuggestedPlayLists _playLists;
+        private readonly UserProperties _userProperties;
         private readonly IConfiguration _config;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
-        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration)
+        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties)
         {
             _SC = SC;
             _authentication = authentication;
             _playLists = playLists;
             _config = configuration;
+            _userProperties = userProperties;
         }
 
         [HttpPost("Login")]
@@ -112,6 +114,27 @@ namespace SpotifyClone.API.Controllers
 
             }
             
+        }
+        [HttpPost("GetUserProperties")]
+        public async Task<ActionResult> GetUserPropertiess([FromBody] string userTokenValue)
+        {
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (userTokenValue != null)
+                {
+                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetter(userTokenValue)));
+                }
+                else
+                { return BadRequest(); }
+
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
         }
         public string CreateToken(LoginDTO request)
         {
