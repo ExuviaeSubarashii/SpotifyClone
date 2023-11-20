@@ -123,7 +123,28 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (userTokenValue != null)
                 {
-                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetter(userTokenValue)));
+                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterByToken(userTokenValue)));
+                }
+                else
+                { return BadRequest(); }
+
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+        }
+        [HttpPost("GetUserPropertiesById")]
+        public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] int? userId)
+        {
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (userId != null)
+                {
+                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterById(userId)));
                 }
                 else
                 { return BadRequest(); }

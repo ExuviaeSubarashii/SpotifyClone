@@ -16,18 +16,40 @@ namespace SpotifyClone.Services.Services
         {
             _SP = sP;
         }
-        public async Task<UserPropertiesDTO> UserPropertiesGetter(string userToken) 
+        public async Task<UserPropertiesDTO> UserPropertiesGetterByToken(string userTokenValue) 
         {
             UserPropertiesDTO userPropertiesDTO = new();
 
-            var properties=await Task.Run(()=>_SP.Users.Where(x=>x.UserToken==userToken).FirstOrDefaultAsync());
+            var properties=await Task.Run(()=>_SP.Users.Where(x=>x.UserToken== userTokenValue).FirstOrDefaultAsync());
             if (properties != null) 
             {
                 userPropertiesDTO = new UserPropertiesDTO()
                 {
                     UserName = properties.UserName.Trim(),
-                    Followers = properties.Followers.Trim(),
-                    Following = properties.Following.Trim()
+                    Followers = properties.Followers.Trim().Length,
+                    Following = properties.Following.Trim().Length,
+                    UserId = properties.Id
+                };
+                return userPropertiesDTO;
+            }
+            else
+            {
+                return new UserPropertiesDTO();
+            }
+        }
+        public async Task<UserPropertiesDTO> UserPropertiesGetterById(int? userId)
+        {
+            UserPropertiesDTO userPropertiesDTO = new();
+
+            var properties = await Task.Run(() => _SP.Users.Where(x => x.Id == userId).FirstOrDefaultAsync());
+            if (properties != null)
+            {
+                userPropertiesDTO = new UserPropertiesDTO()
+                {
+                    UserName = properties.UserName.Trim(),
+                    Followers = properties.Followers.Trim().Length,
+                    Following = properties.Following.Trim().Length,
+                    UserId = properties.Id
                 };
                 return userPropertiesDTO;
             }
