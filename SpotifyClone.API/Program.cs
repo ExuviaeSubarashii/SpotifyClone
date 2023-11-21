@@ -13,6 +13,7 @@ builder.Services.AddScoped<GetPlayLists>();
 builder.Services.AddScoped<GetPlayListContents>();
 builder.Services.AddScoped<SongsService>();
 builder.Services.AddScoped<UserProperties>();
+builder.Services.AddScoped<FollowManager>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

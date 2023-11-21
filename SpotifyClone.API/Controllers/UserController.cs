@@ -17,17 +17,20 @@ namespace SpotifyClone.API.Controllers
         private readonly UserAuthentication _authentication;
         private readonly GetSuggestedPlayLists _playLists;
         private readonly UserProperties _userProperties;
+        private readonly FollowManager _followManager;
         private readonly IConfiguration _config;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
         private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
-        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties)
+        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties, FollowManager followManager)
         {
             _SC = SC;
             _authentication = authentication;
             _playLists = playLists;
             _config = configuration;
             _userProperties = userProperties;
+            _followManager = followManager;
         }
 
         [HttpPost("Login")]
@@ -50,7 +53,7 @@ namespace SpotifyClone.API.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
 
             }
-           
+
 
         }
         [HttpPost("Register")]
@@ -93,7 +96,7 @@ namespace SpotifyClone.API.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
 
             }
-            
+
         }
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser(string userToken)
@@ -113,7 +116,7 @@ namespace SpotifyClone.API.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
 
             }
-            
+
         }
         [HttpPost("GetUserProperties")]
         public async Task<ActionResult> GetUserPropertiess([FromBody] string userTokenValue)
@@ -157,6 +160,48 @@ namespace SpotifyClone.API.Controllers
 
             }
         }
+        [HttpPost("GetUserFollowings")]
+        public async Task<ActionResult> GetUserFollowings([FromBody] FollowRequestDTO request)
+        {
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (request != null)
+                {
+                    return Ok(await Task.Run(() => _followManager.GetFollowing(request.UserId)));
+                }
+                else
+                { return BadRequest(); }
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+
+        }
+        [HttpPost("GetUserFollowers")]
+        public async Task<ActionResult> GetUserFollowers([FromBody]FollowRequestDTO request)
+        {
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                if (request != null)
+                {
+                    return Ok(await Task.Run(() => _followManager.GetFollowers(request.UserId)));
+
+                }
+                else
+                { return BadRequest(); }
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
+        }
         public string CreateToken(LoginDTO request)
         {
             List<Claim> claims = new List<Claim>();
@@ -192,6 +237,7 @@ namespace SpotifyClone.API.Controllers
             var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwttoken;
         }
+
     }
 
 }
