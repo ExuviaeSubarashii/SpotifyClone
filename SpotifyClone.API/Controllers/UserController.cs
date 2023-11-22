@@ -19,9 +19,6 @@ namespace SpotifyClone.API.Controllers
         private readonly UserProperties _userProperties;
         private readonly FollowManager _followManager;
         private readonly IConfiguration _config;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
         public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties, FollowManager followManager)
         {
@@ -38,10 +35,9 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (logindto.UserEmail != null || logindto.Password != null)
                 {
-                    return Ok(await Task.Run(() => _authentication.LoginWithEmail(logindto)));
+                    return Ok(_authentication.LoginWithEmail(logindto));
                 }
                 else
                 { return BadRequest(); }
@@ -49,22 +45,17 @@ namespace SpotifyClone.API.Controllers
             }
             catch (OperationCanceledException)
             {
-
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
             }
-
-
         }
         [HttpPost("Register")]
         public async Task<ActionResult> Register([FromBody] RegisterDTO register)
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (register != null)
                 {
-                    var doesUserExist = await Task.Run(() => _SC.Users.Any(x => x.UserEmail == register.UserEmail));
+                    var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
                     if (!doesUserExist)
                     {
                         var registerUser = new User()
@@ -99,22 +90,23 @@ namespace SpotifyClone.API.Controllers
 
         }
         [HttpPost("AuthUser")]
-        public async Task<ActionResult> AuthUser(string userToken)
+        public ActionResult AuthUser(string userToken)
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
-                bool isAuthed = await Task.Run(() => _authentication.IsAuthenticated(userToken));
+                bool isAuthed = _authentication.IsAuthenticated(userToken);
                 if (isAuthed)
+                {
                     return Ok();
+                }
                 else
+                {
                     return NotFound();
+                }
             }
             catch (OperationCanceledException)
             {
-
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
             }
 
         }
@@ -123,13 +115,14 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (userTokenValue != null)
                 {
-                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterByToken(userTokenValue)));
+                    return Ok(_userProperties.UserPropertiesGetterByToken(userTokenValue));
                 }
                 else
-                { return BadRequest(); }
+                { 
+                    return BadRequest(); 
+                }
 
             }
             catch (OperationCanceledException)
@@ -144,10 +137,9 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (userId != null)
                 {
-                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterById(userId)));
+                    return Ok(_userProperties.UserPropertiesGetterById(userId));
                 }
                 else
                 { return BadRequest(); }
@@ -165,10 +157,9 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (request != null)
                 {
-                    return Ok(await Task.Run(() => _followManager.GetFollowing(request.UserId)));
+                    return Ok(_followManager.GetFollowing(request.UserId));
                 }
                 else
                 { return BadRequest(); }
@@ -182,14 +173,13 @@ namespace SpotifyClone.API.Controllers
 
         }
         [HttpPost("GetUserFollowers")]
-        public async Task<ActionResult> GetUserFollowers([FromBody]FollowRequestDTO request)
+        public async Task<ActionResult> GetUserFollowers([FromBody] FollowRequestDTO request)
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (request != null)
                 {
-                    return Ok(await Task.Run(() => _followManager.GetFollowers(request.UserId)));
+                    return Ok(_followManager.GetFollowers(request.UserId));
 
                 }
                 else

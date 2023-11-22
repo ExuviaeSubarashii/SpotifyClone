@@ -15,8 +15,7 @@ namespace SpotifyClone.API.Controllers
         private readonly GetSuggestedPlayLists _playLists;
         private readonly GetPlayLists _allplayLists;
         private readonly GetPlayListContents _getPlayListContent;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
+
 
         public PlaylistController(SpotifyCloneContext SC, GetSuggestedPlayLists playLists, GetPlayLists getPlayLists, GetPlayListContents getPlayListContent)
         {
@@ -31,24 +30,23 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(request.UserToken))
                 {
                     //playlist
                     if (string.IsNullOrEmpty(request.PlayListType))
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetAllPlayLists(request.UserToken)));
+                        return Ok(await _allplayLists.GetAllPlayLists(request.UserToken));
                     }
 
                     //podcast & show
                     if (request.PlayListType == "Podcast")
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetPodCastAndShows(request.UserToken,request.PlayListType)));
+                        return Ok(await _allplayLists.GetPodCastAndShows(request.UserToken,request.PlayListType));
                     }
                     //albums
                     if (request.PlayListType == "Albums")
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetAlbums(request.UserToken,request.PlayListType)));
+                        return Ok(await _allplayLists.GetAlbums(request.UserToken,request.PlayListType));
                     }
                     else
                     {
@@ -74,7 +72,6 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(userToken))
                 {
                     List<SuggestedPlayListDTO> suggestedPlaylists = await _playLists.GetAllAsync(userToken);
@@ -97,7 +94,6 @@ namespace SpotifyClone.API.Controllers
         {
             try
             {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(playlistId))
                 {
                     List<PlayListContents> suggestedPlaylists = await _getPlayListContent.GetAllPlayListContents(playlistId);
