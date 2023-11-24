@@ -18,49 +18,32 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             _getPlayLists = getPlayLists;
         }
         //create playlist
-        public async Task<List<PlaylistDTO>> CreatePlaylist(CreatePlayListDTO playlistHandler)
+        public async Task CreatePlaylist(CreatePlayListDTO playlistHandler)
         {
             if (playlistHandler != null)
             {
-                var userQuery =  _SP.Users.FirstOrDefault(x => x.UserToken == playlistHandler.UserToken);
-                var playlistQuery = _SP.Playlists.Where(x => x.PlayListOwner == userQuery.Id).ToList();
+                var userQuery =  await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == playlistHandler.UserToken);
+                var playlistQuery = await _SP.Playlists.Where(x => x.PlayListOwner == userQuery.Id).ToListAsync();
                 var newPlaylist = new Playlist()
                 {
                     PlayListId = Guid.NewGuid().ToString("D"),
                     PlayListContents = "",
                     PlayListOwner = userQuery.Id,
                     PlayListTitle = "Playlist# " + (playlistQuery.Count + 1),
-                    PlayListType = "Playlist"
+                    PlayListType = "Playlist",
+                    PlayListOwnerName=userQuery.UserName
                 };
                 _SP.Playlists.Add(newPlaylist);
-                _SP.SaveChanges();
-                var list = _getPlayLists.GetAllPlayLists(playlistHandler.UserToken);
-                return await list;
-            }
-            else
-            {
-                var list = _getPlayLists.GetAllPlayLists(playlistHandler.UserToken);
-                return await list;
+                AddPlaylistToFavorited(playlistHandler,newPlaylist.PlayListId);
             }
         }
-        //public async Task CreatePlaylist(CreatePlayListDTO playlistHandler)
-        //{
-        //    if (playlistHandler != null)
-        //    {
-        //        var userQuery = _SP.Users.FirstOrDefault(x => x.UserToken == playlistHandler.UserToken);
-        //        var playlistQuery = _SP.Playlists.Where(x => x.PlayListOwner == userQuery.Id).ToList();
-        //        var newPlaylist = new Playlist()
-        //        {
-        //            PlayListId = Guid.NewGuid().ToString("D"),
-        //            PlayListContents = "",
-        //            PlayListOwner = userQuery.Id,
-        //            PlayListTitle = "Playlist# " + (playlistQuery.Count + 1),
-        //            PlayListType = "Playlist"
-        //        };
-        //        _SP.Playlists.Add(newPlaylist);
-        //        _SP.SaveChanges();
-        //    }
-        //}
+        public async void AddPlaylistToFavorited(CreatePlayListDTO playlistHandler,string newplaylistid)
+        {
+                var userQuery = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == playlistHandler.UserToken);
+                var leftside = userQuery.FavoritedPlaylists;
+                userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim()+"," + newplaylistid.Trim();
+                _SP.SaveChanges();
+        }
         //delete playlist
         public async Task<Task<List<PlaylistDTO>>> DeletePlaylist(DeletePlaylistDTO deleteHandler)
         {

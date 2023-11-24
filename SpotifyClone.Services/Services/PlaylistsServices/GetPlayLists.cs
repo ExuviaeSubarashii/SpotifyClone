@@ -20,28 +20,58 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         {
             var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
 
-            var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id).ToListAsync();
-            if (playlists != null)
+            List<PlaylistDTO> playlistDtos = new();
+
+            var playlistIds  = await _SC.Users.Where(x => x.Id == user.Id).ToListAsync();
+            string[] playlistarray= new string[0];
+            foreach (var item in playlistIds)
             {
-
-                List<PlaylistDTO> playlistDtos = new();
-
-                for (int i = 0; i < playlists.Count; i++)
+                playlistarray = item.FavoritedPlaylists.Trim().Split(',');
+            }
+            if (playlistarray[0]!="")
+            {
+                foreach (var item in playlistarray)
                 {
-                    var playlistData = playlists.ToList()[i];
+                    var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
                     PlaylistDTO playlist = new PlaylistDTO()
                     {
-                        PlayListId = playlistData.PlayListId.Trim(),
-                        PlayListOwner = user.UserName,
-                        PlayListContents = playlistData.PlayListContents.Trim(),
-                        PlayListType = playlistData.PlayListType.Trim(),
-                        PlayListTitle = playlistData.PlayListTitle.Trim(),
-                        PlayListCount = playlistData.PlayListContents.Trim().Count()
+                        PlayListId=idk.PlayListId.Trim(),
+                        PlayListOwner=idk.PlayListOwnerName.Trim(),
+                        PlayListContents=idk.PlayListContents.Trim(),
+                        PlayListType=idk.PlayListType.Trim(),
+                        PlayListTitle=idk.PlayListTitle.Trim(),
+                        PlayListCount=idk.PlayListContents.Trim().Count(),
+                        PlayListOwnerId=idk.PlayListOwner,
                     };
                     playlistDtos.Add(playlist);
                 }
                 return playlistDtos;
             }
+
+            //dont delete this
+            //var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id).ToListAsync();
+
+            //if (playlists != null)
+            //{
+            //    List<PlaylistDTO> playlistDtos = new();
+
+            //    for (int i = 0; i < playlists.Count; i++)
+            //    {
+            //        var playlistData = playlists.ToList()[i];
+            //        PlaylistDTO playlist = new PlaylistDTO()
+            //        {
+            //            PlayListId = playlistData.PlayListId.Trim(),
+            //            PlayListOwner = user.UserName.Trim(),
+            //            PlayListContents = playlistData.PlayListContents.Trim(),
+            //            PlayListType = playlistData.PlayListType.Trim(),
+            //            PlayListTitle = playlistData.PlayListTitle.Trim(),
+            //            PlayListCount = playlistData.PlayListContents.Trim().Count(),
+            //            PlayListOwnerId=playlistData.PlayListOwner
+            //        };
+            //        playlistDtos.Add(playlist);
+            //    }
+            //    return playlistDtos;
+            //}
             else
             {
                 return new List<PlaylistDTO>();

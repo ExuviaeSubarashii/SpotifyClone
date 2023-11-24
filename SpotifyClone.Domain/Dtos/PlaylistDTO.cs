@@ -14,5 +14,6 @@ namespace SpotifyClone.Domain.Dtos
         public string PlayListType { get; set; } = null!;
         public string PlayListTitle { get; set; } = null!;
         public int PlayListCount { get; set; }
+        public int PlayListOwnerId { get; set; }
     }
 }

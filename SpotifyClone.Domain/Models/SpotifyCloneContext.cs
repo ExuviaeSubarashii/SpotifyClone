@@ -55,6 +55,10 @@ namespace SpotifyClone.Domain.Models
                     .HasMaxLength(15)
                     .IsUnicode(false)
                     .IsFixedLength();
+                entity.Property(e => e.PlayListOwnerName)
+                   .HasMaxLength(35)
+                   .IsUnicode(false)
+                   .IsFixedLength();
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -88,6 +92,11 @@ namespace SpotifyClone.Domain.Models
                     .HasMaxLength(208)
                     .IsUnicode(false)
                     .IsFixedLength();
+
+                entity.Property(e => e.FavoritedPlaylists)
+                .HasMaxLength(1000)
+                .IsUnicode(false)
+                .IsFixedLength();
             });
             modelBuilder.Entity<Songs>(entity =>
             {

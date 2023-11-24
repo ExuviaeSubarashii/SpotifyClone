@@ -10,5 +10,6 @@ namespace SpotifyClone.Domain.Models
         public string PlayListContents { get; set; } = null!;
         public string PlayListType { get; set; } = null!;
         public string PlayListTitle { get; set; } = null!;
+        public string PlayListOwnerName {  get; set; } = null!;
     }
 }
