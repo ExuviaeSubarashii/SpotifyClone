@@ -1,5 +1,7 @@
 using SpotifyClone.Domain.Models;
-using SpotifyClone.Services.Services;
+using SpotifyClone.Services.Services.PlaylistsServices;
+using SpotifyClone.Services.Services.SongServices;
+using SpotifyClone.Services.Services.UserServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +12,10 @@ builder.Services.AddScoped<SpotifyCloneContext>();
 builder.Services.AddScoped<UserAuthentication>();
 builder.Services.AddScoped<GetSuggestedPlayLists>();
 builder.Services.AddScoped<GetPlayLists>();
-builder.Services.AddScoped<GetPlayListContents>();
 builder.Services.AddScoped<SongsService>();
 builder.Services.AddScoped<UserProperties>();
 builder.Services.AddScoped<FollowManager>();
+builder.Services.AddScoped<PlaylistHandler>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

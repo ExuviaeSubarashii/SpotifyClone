@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SpotifyClone.Domain.Models;
-using SpotifyClone.Services.Services;
+using SpotifyClone.Services.Services.SongServices;
 
 namespace SpotifyClone.API.Controllers
 {
@@ -39,6 +39,11 @@ namespace SpotifyClone.API.Controllers
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
             }
+        }
+        [HttpGet("GetAllSongs")]
+        public async Task<ActionResult> GetAllSongs()
+        {
+            return Ok(await _songsService.GetAllSongs());
         }
     }
 }

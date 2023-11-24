@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpotifyClone.Services.Services
+namespace SpotifyClone.Services.Services.UserServices
 {
     public class UserProperties
     {
@@ -16,12 +16,12 @@ namespace SpotifyClone.Services.Services
         {
             _SP = sP;
         }
-        public async Task<UserPropertiesDTO> UserPropertiesGetterByToken(string userTokenValue) 
+        public async Task<UserPropertiesDTO> UserPropertiesGetterByToken(string userTokenValue)
         {
             UserPropertiesDTO userPropertiesDTO = new();
 
-            var properties=await Task.Run(()=>_SP.Users.Where(x=>x.UserToken== userTokenValue).FirstOrDefaultAsync());
-            if (properties != null) 
+            var properties = await Task.Run(() => _SP.Users.Where(x => x.UserToken == userTokenValue).FirstOrDefaultAsync());
+            if (properties != null)
             {
                 userPropertiesDTO = new UserPropertiesDTO()
                 {

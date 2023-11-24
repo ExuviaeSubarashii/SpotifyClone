@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpotifyClone.Services.Services
+namespace SpotifyClone.Services.Services.UserServices
 {
     public class UserAuthentication
     {
@@ -32,11 +32,11 @@ namespace SpotifyClone.Services.Services
                 var user = new UserDTO()
                 {
                     Id = query.Id,
-                    UserEmail = query.UserEmail,
-                    UserName = query.UserName,
+                    UserEmail = query.UserEmail.Trim(),
+                    UserName = query.UserName.Trim(),
                     Followers = query.Followers.Count().ToString(),
                     Following = query.Following.Count().ToString(),
-                    UserToken=query.UserToken
+                    UserToken = query.UserToken
                 };
                 return user;
             }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpotifyClone.Services.Services
+namespace SpotifyClone.Services.Services.PlaylistsServices
 {
     public class GetSuggestedPlayLists
     {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
-using SpotifyClone.Services.Services;
+using SpotifyClone.Services.Services.PlaylistsServices;
 using System.Diagnostics.Eventing.Reader;
 
 namespace SpotifyClone.API.Controllers
@@ -12,19 +12,18 @@ namespace SpotifyClone.API.Controllers
     public class PlaylistController : ControllerBase
     {
         private readonly SpotifyCloneContext _SC;
-        private readonly GetSuggestedPlayLists _playLists;
+        private readonly GetSuggestedPlayLists _suggestedplayLists;
         private readonly GetPlayLists _allplayLists;
-        private readonly GetPlayListContents _getPlayListContent;
+        private readonly PlaylistHandler _playlistHandler;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
-        public PlaylistController(SpotifyCloneContext SC, GetSuggestedPlayLists playLists, GetPlayLists getPlayLists, GetPlayListContents getPlayListContent)
+        public PlaylistController(SpotifyCloneContext SC, GetSuggestedPlayLists suggestedplayLists, GetPlayLists getPlayLists, PlaylistHandler playlistHandler)
         {
             _SC = SC;
-            _playLists = playLists;
+            _suggestedplayLists = suggestedplayLists;
             _allplayLists = getPlayLists;
-            _getPlayListContent = getPlayListContent;
-
+            _playlistHandler = playlistHandler;
         }
         [HttpPost("GetUserPlayLists")]
         public async Task<ActionResult> GetUserPlayLists([FromBody] PlaylistRequestDTO request)
@@ -77,7 +76,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(userToken))
                 {
-                    List<SuggestedPlayListDTO> suggestedPlaylists = await _playLists.GetAllAsync(userToken);
+                    List<SuggestedPlayListDTO> suggestedPlaylists = await _suggestedplayLists.GetAllAsync(userToken);
                     return Ok(suggestedPlaylists);
                 }
                 else
@@ -100,7 +99,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (!string.IsNullOrEmpty(playlistId))
                 {
-                    List<PlayListContents> suggestedPlaylists = await _getPlayListContent.GetAllPlayListContents(playlistId);
+                    List<PlayListContents> suggestedPlaylists = await _allplayLists.GetAllPlayListContents(playlistId);
                     return Ok(suggestedPlaylists);
                 }
                 else
@@ -114,6 +113,12 @@ namespace SpotifyClone.API.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
 
             }
+        }
+        [HttpPost("CreatePlayList")]
+        public async Task<ActionResult> CreatePlaylist([FromBody] CreatePlayListDTO handlerDto)
+        {
+            var playlist = _playlistHandler.CreatePlaylist(handlerDto);
+            return Ok (playlist);
         }
     }
 }

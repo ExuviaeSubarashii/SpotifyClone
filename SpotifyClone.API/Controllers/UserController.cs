@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
-using SpotifyClone.Services.Services;
+using SpotifyClone.Services.Services.PlaylistsServices;
+using SpotifyClone.Services.Services.UserServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -69,9 +70,9 @@ namespace SpotifyClone.API.Controllers
                     {
                         var registerUser = new User()
                         {
-                            UserEmail = register.UserEmail,
-                            UserName = register.UserName,
-                            Password = register.UserPassword,
+                            UserEmail = register.UserEmail.Trim(),
+                            UserName = register.UserName.Trim(),
+                            Password = register.UserPassword.Trim(),
                             Followers = "0",
                             Following = "0",
                             UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),

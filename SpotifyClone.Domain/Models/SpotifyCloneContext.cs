@@ -44,7 +44,6 @@ namespace SpotifyClone.Domain.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.PlayListOwner)
-                    .HasMaxLength(208)
                     .IsUnicode(false)
                     .IsFixedLength();
 
