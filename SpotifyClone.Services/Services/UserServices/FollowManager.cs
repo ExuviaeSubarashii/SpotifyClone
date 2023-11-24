@@ -19,7 +19,7 @@ namespace SpotifyClone.Services.Services.UserServices
         }
         public async Task<List<FollowingDTO>> GetFollowing(int id)
         {
-            var user = await Task.Run(() => _SP.Users.FirstOrDefaultAsync(x => x.Id == id));
+            var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (user != null)
             {
 
@@ -30,7 +30,7 @@ namespace SpotifyClone.Services.Services.UserServices
                     for (int i = 0; i < list.Length; i++)
                     {
                         var followingData = list.ToList()[i];
-                        var followingQuery = await Task.Run(() => _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followingData)));
+                        var followingQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followingData));
                         FollowingDTO following = new FollowingDTO()
                         {
                             UserId = followingQuery.Id,
@@ -52,7 +52,7 @@ namespace SpotifyClone.Services.Services.UserServices
         }
         public async Task<List<FollowsDTO>> GetFollowers(int id)
         {
-            var user = await Task.Run(() => _SP.Users.FirstOrDefaultAsync(x => x.Id == id));
+            var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (user != null)
             {
 
@@ -63,7 +63,7 @@ namespace SpotifyClone.Services.Services.UserServices
                     for (int i = 0; i < list.Length; i++)
                     {
                         var followersData = list.ToList()[i];
-                        var followersQuery = await Task.Run(() => _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followersData)));
+                        var followersQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followersData));
                         FollowsDTO following = new FollowsDTO()
                         {
                             UserId = followersQuery.Id,

@@ -36,18 +36,18 @@ namespace SpotifyClone.API.Controllers
                     //playlist
                     if (string.IsNullOrEmpty(request.PlayListType))
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetAllPlayLists(request.UserToken)));
+                        return Ok(await _allplayLists.GetAllPlayLists(request.UserToken));
                     }
 
                     //podcast & show
                     if (request.PlayListType == "Podcast")
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetPodCastAndShows(request.UserToken, request.PlayListType)));
+                        return Ok(await _allplayLists.GetPodCastAndShows(request.UserToken, request.PlayListType));
                     }
                     //albums
                     if (request.PlayListType == "Albums")
                     {
-                        return Ok(await Task.Run(() => _allplayLists.GetAlbums(request.UserToken, request.PlayListType)));
+                        return Ok(await _allplayLists.GetAlbums(request.UserToken, request.PlayListType));
                     }
                     else
                     {

@@ -42,7 +42,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (logindto.UserEmail != null || logindto.Password != null)
                 {
-                    return Ok(await Task.Run(() => _authentication.LoginWithEmail(logindto)));
+                    return Ok(await _authentication.LoginWithEmailAsync(logindto));
                 }
                 else
                 { return BadRequest(); }
@@ -65,7 +65,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (register != null)
                 {
-                    var doesUserExist = await Task.Run(() => _SC.Users.Any(x => x.UserEmail == register.UserEmail));
+                    var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
                     if (!doesUserExist)
                     {
                         var registerUser = new User()
@@ -105,7 +105,7 @@ namespace SpotifyClone.API.Controllers
             try
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                bool isAuthed = await Task.Run(() => _authentication.IsAuthenticated(userToken));
+                bool isAuthed = _authentication.IsAuthenticated(userToken);
                 if (isAuthed)
                     return Ok();
                 else
@@ -127,7 +127,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (userTokenValue != null)
                 {
-                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterByToken(userTokenValue)));
+                    return Ok(await _userProperties.UserPropertiesGetterByToken(userTokenValue));
                 }
                 else
                 { return BadRequest(); }
@@ -148,7 +148,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (userId != null)
                 {
-                    return Ok(await Task.Run(() => _userProperties.UserPropertiesGetterById(userId)));
+                    return Ok(await _userProperties.UserPropertiesGetterById(userId));
                 }
                 else
                 { return BadRequest(); }
@@ -169,7 +169,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (request != null)
                 {
-                    return Ok(await Task.Run(() => _followManager.GetFollowing(request.UserId)));
+                    return Ok(await _followManager.GetFollowing(request.UserId));
                 }
                 else
                 { return BadRequest(); }
@@ -190,7 +190,7 @@ namespace SpotifyClone.API.Controllers
                 _cancellationToken.ThrowIfCancellationRequested();
                 if (request != null)
                 {
-                    return Ok(await Task.Run(() => _followManager.GetFollowers(request.UserId)));
+                    return Ok(await _followManager.GetFollowers(request.UserId));
 
                 }
                 else

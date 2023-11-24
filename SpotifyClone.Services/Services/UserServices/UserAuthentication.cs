@@ -1,4 +1,5 @@
-﻿using SpotifyClone.Domain.Dtos;
+﻿using Microsoft.EntityFrameworkCore;
+using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,9 @@ namespace SpotifyClone.Services.Services.UserServices
             }
             else { return false; }
         }
-        public UserDTO LoginWithEmail(LoginDTO loginDTO)
+        public async Task<UserDTO> LoginWithEmailAsync(LoginDTO loginDTO)
         {
-            var query = _SC.Users.FirstOrDefault(x => x.UserEmail == loginDTO.UserEmail && x.Password == loginDTO.Password);
+            var query = await _SC.Users.FirstOrDefaultAsync(x => x.UserEmail == loginDTO.UserEmail && x.Password == loginDTO.Password);
             if (query != null)
             {
                 var user = new UserDTO()

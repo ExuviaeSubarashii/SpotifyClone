@@ -18,9 +18,9 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         }
         public async Task<List<PlaylistDTO>> GetAllPlayLists(string userToken)
         {
-            var user = _SC.Users.FirstOrDefault(x => x.UserToken == userToken);
+            var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
 
-            var playlists = _SC.Playlists.Where(x => x.PlayListOwner == user.Id).ToList();
+            var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id).ToListAsync();
             if (playlists != null)
             {
 
@@ -49,9 +49,9 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         }
         public async Task<List<PlaylistDTO>> GetPodCastAndShows(string userToken, string? playlistType)
         {
-            var user = await Task.Run(() => _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken));
+            var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
 
-            var playlists = await Task.Run(() => _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType).ToListAsync());
+            var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType).ToListAsync();
             if (playlists != null)
             {
 
@@ -81,9 +81,9 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         }
         public async Task<List<PlaylistDTO>> GetAlbums(string userToken, string? playlistType)
         {
-            var user = await Task.Run(() => _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken));
+            var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
 
-            var playlists = await Task.Run(() => _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType).ToListAsync());
+            var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType).ToListAsync();
             if (playlists != null)
             {
 
@@ -115,7 +115,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         {
             List<PlayListContents> playListContentsDtos = new List<PlayListContents>();
 
-            var playlist = await Task.Run(() => _SC.Playlists.Where(x => x.PlayListId == id).ToListAsync());
+            var playlist = await _SC.Playlists.Where(x => x.PlayListId == id).ToListAsync();
             string[] songList = new string[0];
 
             foreach (var item in playlist)
@@ -126,7 +126,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             {
                 foreach (var item in songList)
                 {
-                    var idk = await Task.Run(() => _SC.Songs.Where(x => x.Id == int.Parse(item)).FirstOrDefaultAsync());
+                    var idk = await _SC.Songs.Where(x => x.Id == int.Parse(item)).FirstOrDefaultAsync();
                     var result = new PlayListContents()
                     {
                         SongId = idk.Id,

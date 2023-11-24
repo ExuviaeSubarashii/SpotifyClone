@@ -22,7 +22,7 @@ namespace SpotifyClone.Services.Services.SongServices
         {
             CurrentSongDTO currentSongDTO = new();
 
-            var getSongProperties = await Task.Run(() => _SP.Songs.FirstOrDefault(x => x.Id == songId));
+            var getSongProperties = await _SP.Songs.FirstOrDefaultAsync(x => x.Id == songId);
 
             currentSongDTO.SongName = getSongProperties.SongName.Trim();
             currentSongDTO.Duration = getSongProperties.Duration;
@@ -33,7 +33,7 @@ namespace SpotifyClone.Services.Services.SongServices
         }
         public async Task<List<SongsDTO>> GetAllSongs()
         {
-            var songs=await Task.Run(()=>_SP.Songs.ToListAsync());
+            var songs=await _SP.Songs.ToListAsync();
 
             if (songs.Count > 0) 
             {

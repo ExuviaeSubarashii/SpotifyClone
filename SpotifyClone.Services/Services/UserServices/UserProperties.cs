@@ -20,7 +20,7 @@ namespace SpotifyClone.Services.Services.UserServices
         {
             UserPropertiesDTO userPropertiesDTO = new();
 
-            var properties = await Task.Run(() => _SP.Users.Where(x => x.UserToken == userTokenValue).FirstOrDefaultAsync());
+            var properties = await _SP.Users.Where(x => x.UserToken == userTokenValue).FirstOrDefaultAsync();
             if (properties != null)
             {
                 userPropertiesDTO = new UserPropertiesDTO()
@@ -41,7 +41,7 @@ namespace SpotifyClone.Services.Services.UserServices
         {
             UserPropertiesDTO userPropertiesDTO = new();
 
-            var properties = await Task.Run(() => _SP.Users.Where(x => x.Id == userId).FirstOrDefaultAsync());
+            var properties = await _SP.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
             if (properties != null)
             {
                 userPropertiesDTO = new UserPropertiesDTO()
