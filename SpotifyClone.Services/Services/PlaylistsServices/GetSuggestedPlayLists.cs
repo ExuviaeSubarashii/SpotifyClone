@@ -20,23 +20,32 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
 
         public async Task<List<SuggestedPlayListDTO>> GetAllAsync(string userToken)
         {
-            List<SuggestedPlayListDTO> playlistDTOs = new List<SuggestedPlayListDTO>();
-
-            List<Playlist> playlists = await _SC.Playlists.ToListAsync();
-            Random rnd = new Random();
-            var randomPlaylists = playlists.OrderBy(x => rnd.Next()).Take(6).ToList();
-
-            foreach (var item in randomPlaylists)
+            try
             {
-                var result = new SuggestedPlayListDTO()
-                {
-                    PlayListId = item.PlayListId,
-                    Title = item.PlayListTitle
-                };
-                playlistDTOs.Add(result);
-            }
+                List<SuggestedPlayListDTO> playlistDTOs = new List<SuggestedPlayListDTO>();
 
-            return playlistDTOs;
+                List<Playlist> playlists = await _SC.Playlists.ToListAsync();
+                Random rnd = new Random();
+                var randomPlaylists = playlists.OrderBy(x => rnd.Next()).Take(6).ToList();
+
+                foreach (var item in randomPlaylists)
+                {
+                    var result = new SuggestedPlayListDTO()
+                    {
+                        PlayListId = item.PlayListId,
+                        Title = item.PlayListTitle
+                    };
+                    playlistDTOs.Add(result);
+                }
+
+                return playlistDTOs;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
     }
 }

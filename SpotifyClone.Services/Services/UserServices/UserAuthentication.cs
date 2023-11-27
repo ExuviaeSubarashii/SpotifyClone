@@ -18,33 +18,51 @@ namespace SpotifyClone.Services.Services.UserServices
         }
         public bool IsAuthenticated(string userToken)
         {
-            var query = _SC.Users.Where(x => x.UserToken == userToken).Any();
-            if (query)
+            try
             {
-                return true;
+                var query = _SC.Users.Where(x => x.UserToken == userToken).Any();
+                if (query)
+                {
+                    return true;
+                }
+                else { return false; }
             }
-            else { return false; }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
         public async Task<UserDTO> LoginWithEmailAsync(LoginDTO loginDTO)
         {
-            var query = await _SC.Users.FirstOrDefaultAsync(x => x.UserEmail == loginDTO.UserEmail && x.Password == loginDTO.Password);
-            if (query != null)
+            try
             {
-                var user = new UserDTO()
+                var query = await _SC.Users.FirstOrDefaultAsync(x => x.UserEmail == loginDTO.UserEmail && x.Password == loginDTO.Password);
+                if (query != null)
                 {
-                    Id = query.Id,
-                    UserEmail = query.UserEmail.Trim(),
-                    UserName = query.UserName.Trim(),
-                    Followers = query.Followers.Count().ToString(),
-                    Following = query.Following.Count().ToString(),
-                    UserToken = query.UserToken
-                };
-                return user;
+                    var user = new UserDTO()
+                    {
+                        Id = query.Id,
+                        UserEmail = query.UserEmail.Trim(),
+                        UserName = query.UserName.Trim(),
+                        Followers = query.Followers.Count().ToString(),
+                        Following = query.Following.Count().ToString(),
+                        UserToken = query.UserToken
+                    };
+                    return user;
+                }
+                else
+                {
+                    return new UserDTO();
+                }
             }
-            else
+            catch (Exception)
             {
-                return new UserDTO();
+
+                throw;
             }
+           
         }
     }
 }

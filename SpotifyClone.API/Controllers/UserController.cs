@@ -37,9 +37,6 @@ namespace SpotifyClone.API.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginDTO logindto)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (logindto.UserEmail != null || logindto.Password != null)
                 {
                     return Ok(await _authentication.LoginWithEmailAsync(logindto));
@@ -47,22 +44,13 @@ namespace SpotifyClone.API.Controllers
                 else
                 { return BadRequest(); }
 
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
-
+        
 
         }
         [HttpPost("Register")]
         public async Task<ActionResult> Register([FromBody] RegisterDTO register)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+         
                 if (register != null)
                 {
                     var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
@@ -90,41 +78,28 @@ namespace SpotifyClone.API.Controllers
                 {
                     return BadRequest();
                 }
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+          
 
         }
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser(string userToken)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+          
                 bool isAuthed = _authentication.IsAuthenticated(userToken);
                 if (isAuthed)
                     return Ok();
-                else
-                    return NotFound();
-            }
-            catch (OperationCanceledException)
+            else
             {
 
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
+                    return NotFound();
             }
-
+            
+          
         }
         [HttpPost("GetUserProperties")]
         public async Task<ActionResult> GetUserPropertiess([FromBody] string userTokenValue)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+           
                 if (userTokenValue != null)
                 {
                     return Ok(await _userProperties.UserPropertiesGetterByToken(userTokenValue));
@@ -132,20 +107,12 @@ namespace SpotifyClone.API.Controllers
                 else
                 { return BadRequest(); }
 
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+        
         }
         [HttpPost("GetUserPropertiesById")]
         public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] int? userId)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+           
                 if (userId != null)
                 {
                     return Ok(await _userProperties.UserPropertiesGetterById(userId));
@@ -153,41 +120,24 @@ namespace SpotifyClone.API.Controllers
                 else
                 { return BadRequest(); }
 
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+           
         }
         [HttpPost("GetUserFollowings")]
         public async Task<ActionResult> GetUserFollowings([FromBody] FollowRequestDTO request)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+           
                 if (request != null)
                 {
                     return Ok(await _followManager.GetFollowing(request.UserId));
                 }
                 else
                 { return BadRequest(); }
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+           
 
         }
         [HttpPost("GetUserFollowers")]
         public async Task<ActionResult> GetUserFollowers([FromBody] FollowRequestDTO request)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
                 if (request != null)
                 {
                     return Ok(await _followManager.GetFollowers(request.UserId));
@@ -195,13 +145,7 @@ namespace SpotifyClone.API.Controllers
                 }
                 else
                 { return BadRequest(); }
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+           
         }
         public string CreateToken(LoginDTO request)
         {

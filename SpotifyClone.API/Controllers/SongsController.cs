@@ -22,9 +22,7 @@ namespace SpotifyClone.API.Controllers
         [HttpPost("SetCurrentSong")]
         public async Task<ActionResult> SetCurrentSong([FromBody] int songId)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+         
                 if (songId != null)
                 {
                     var songProperties = await _songsService.SetCurrentSong(songId);
@@ -34,11 +32,8 @@ namespace SpotifyClone.API.Controllers
                 {
                     return BadRequest();
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-            }
+            
+    
         }
         [HttpGet("GetAllSongs")]
         public async Task<ActionResult> GetAllSongs()

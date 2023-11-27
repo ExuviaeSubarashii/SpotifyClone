@@ -28,9 +28,7 @@ namespace SpotifyClone.API.Controllers
         [HttpPost("GetUserPlayLists")]
         public async Task<ActionResult> GetUserPlayLists([FromBody] PlaylistRequestDTO request)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+            
                 if (!string.IsNullOrEmpty(request.UserToken))
                 {
                     //playlist
@@ -59,21 +57,12 @@ namespace SpotifyClone.API.Controllers
                     return BadRequest();
                 }
 
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
 
         }
         [HttpPost("GetSuggestedPlayLists")]
         public async Task<ActionResult> GetSuggestedPlayLists([FromBody] string userToken)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+           
                 if (!string.IsNullOrEmpty(userToken))
                 {
                     List<SuggestedPlayListDTO> suggestedPlaylists = await _suggestedplayLists.GetAllAsync(userToken);
@@ -83,20 +72,12 @@ namespace SpotifyClone.API.Controllers
                 {
                     return BadRequest();
                 }
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+          
         }
         [HttpPost("GetPlaylistContents")]
         public async Task<ActionResult> GetPlaylistContents([FromBody] string playlistId)
         {
-            try
-            {
-                _cancellationToken.ThrowIfCancellationRequested();
+           
                 if (!string.IsNullOrEmpty(playlistId))
                 {
                     List<PlayListContents> suggestedPlaylists = await _allplayLists.GetAllPlayListContents(playlistId);
@@ -106,18 +87,19 @@ namespace SpotifyClone.API.Controllers
                 {
                     return BadRequest();
                 }
-            }
-            catch (OperationCanceledException)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
-
-            }
+       
         }
         [HttpPost("CreatePlayList")]
         public async Task<ActionResult> CreatePlaylist([FromBody] CreatePlayListDTO handlerDto)
         {
-            return Ok (_playlistHandler.CreatePlaylist(handlerDto));
+            await _playlistHandler.CreatePlaylist(handlerDto);
+            return Ok ();
+        }
+        [HttpPost("AddNewContent")]
+        public async Task<ActionResult> AddNewContent([FromBody]UpdatePlaylistDTO handlerDto)
+        {
+            await _playlistHandler.UpdatePlaylist(handlerDto);
+            return Ok();
         }
     }
 }

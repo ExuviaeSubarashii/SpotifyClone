@@ -19,69 +19,82 @@ namespace SpotifyClone.Services.Services.UserServices
         }
         public async Task<List<FollowingDTO>> GetFollowing(int id)
         {
-            var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
-            if (user != null)
+            try
             {
-
-                string[] list = user.Following.Split(",");
+                var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
                 if (user != null)
                 {
-                    List<FollowingDTO> followinglist = new();
-                    for (int i = 0; i < list.Length; i++)
+
+                    string[] list = user.Following.Split(",");
+                    if (user != null)
                     {
-                        var followingData = list.ToList()[i];
-                        var followingQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followingData));
-                        FollowingDTO following = new FollowingDTO()
+                        List<FollowingDTO> followinglist = new();
+                        for (int i = 0; i < list.Length; i++)
                         {
-                            UserId = followingQuery.Id,
-                            UserName = followingQuery.UserName.Trim(),
-                        };
-                        followinglist.Add(following);
+                            var followingData = list.ToList()[i];
+                            var followingQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followingData));
+                            FollowingDTO following = new FollowingDTO()
+                            {
+                                UserId = followingQuery.Id,
+                                UserName = followingQuery.UserName.Trim(),
+                            };
+                            followinglist.Add(following);
+                        }
+                        return followinglist;
                     }
-                    return followinglist;
+                    else
+                    {
+                        return new List<FollowingDTO>();
+                    }
                 }
                 else
                 {
                     return new List<FollowingDTO>();
                 }
             }
-            else
+            catch (Exception)
             {
-                return new List<FollowingDTO>();
+
+                throw;
             }
+            
         }
         public async Task<List<FollowsDTO>> GetFollowers(int id)
         {
-            var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
-            if (user != null)
-            {
-
-                string[] list = user.Followers.Split(",");
+           
+                var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
                 if (user != null)
                 {
-                    List<FollowsDTO> followerlist = new();
-                    for (int i = 0; i < list.Length; i++)
+
+                    string[] list = user.Followers.Split(",");
+                    if (user != null)
                     {
-                        var followersData = list.ToList()[i];
-                        var followersQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followersData));
-                        FollowsDTO following = new FollowsDTO()
+                        List<FollowsDTO> followerlist = new();
+                        for (int i = 0; i < list.Length; i++)
                         {
-                            UserId = followersQuery.Id,
-                            UserName = followersQuery.UserName.Trim(),
-                        };
-                        followerlist.Add(following);
+                            var followersData = list.ToList()[i].Trim();
+                            var x=int.Parse(followersData);
+                            var followersQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followersData));
+                            FollowsDTO following = new FollowsDTO()
+                            {
+                                UserId = followersQuery.Id,
+                                UserName = followersQuery.UserName.Trim(),
+                            };
+                            followerlist.Add(following);
+                        }
+                        return followerlist;
                     }
-                    return followerlist;
+                    else
+                    {
+                        return new List<FollowsDTO>();
+                    }
                 }
                 else
                 {
                     return new List<FollowsDTO>();
                 }
-            }
-            else
-            {
-                return new List<FollowsDTO>();
-            }
+          
+            
         }
     }
 }

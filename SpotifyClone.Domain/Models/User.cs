@@ -12,7 +12,7 @@ namespace SpotifyClone.Domain.Models
         public string Followers { get; set; } = null!;
         public string Following { get; set; } = null!;
         public string UserToken { get; set; } = null!;
-        public string FavoritedPlaylists { get; set; } = null!;
+        public string? FavoritedPlaylists { get; set; } = null!;
 
     }
 }
