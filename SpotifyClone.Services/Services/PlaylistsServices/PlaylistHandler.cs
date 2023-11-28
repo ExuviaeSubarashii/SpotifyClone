@@ -37,7 +37,8 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         PlayListOwnerName = userQuery.UserName
                     };
                     _SP.Playlists.Add(newPlaylist);
-                    AddPlaylistToFavorited(playlistHandler, newPlaylist.PlayListId);
+                    userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim() + "," + newPlaylist.PlayListId.Trim();
+                    _SP.SaveChanges();
                 }
             }
             catch (Exception)
@@ -46,13 +47,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 throw;
             }
 
-        }
-        public async void AddPlaylistToFavorited(CreatePlayListDTO playlistHandler, string newplaylistid)
-        {
-            var userQuery = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == playlistHandler.UserToken);
-            var leftside = userQuery.FavoritedPlaylists;
-            userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim() + "," + newplaylistid.Trim();
-            _SP.SaveChanges();
         }
         //delete playlist
         public async Task DeletePlaylist(DeletePlaylistDTO deleteHandler)

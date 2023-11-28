@@ -183,7 +183,11 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 }
                 if (playlist.Count>0)
                 {
-                    foreach (var item in songList)
+                    List<string> songListWithoutEmptyStrings = songList.ToList();
+                    songListWithoutEmptyStrings.RemoveAll(item => item == "");
+                    string[] updatedSongList = songListWithoutEmptyStrings.ToArray();
+
+                    foreach (var item in updatedSongList)
                     {
                         var idk = await _SC.Songs.Where(x => x.Id == int.Parse(item)).FirstOrDefaultAsync();
                         var result = new PlayListContents()
