@@ -101,5 +101,11 @@ namespace SpotifyClone.API.Controllers
             await _playlistHandler.UpdatePlaylist(handlerDto);
             return Ok();
         }
+        [HttpPost("PlaylistSearch")]
+        public async Task<ActionResult> PlaylistSearch([FromBody]PlaylistSearchDTO playlistName)
+        {
+           
+            return Ok(await _allplayLists.GetPlaylistBySearch(playlistName.PlaylistName));
+        }
     }
 }

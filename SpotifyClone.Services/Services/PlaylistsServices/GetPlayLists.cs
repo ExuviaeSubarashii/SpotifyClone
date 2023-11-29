@@ -44,6 +44,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                             PlayListTitle = idk.PlayListTitle.Trim(),
                             PlayListCount = playlistarray.Count(),
                             PlayListOwnerId = idk.PlayListOwner,
+                            DateCreated=idk.DateCreated,
                         };
                         playlistDtos.Add(playlist);
                     }
@@ -193,11 +194,11 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         var result = new PlayListContents()
                         {
                             SongId = idk.Id,
-                            DateAdded = idk.DateAdded,
                             Duration = idk.Duration,
                             SongName = idk.SongName,
                             SongArtist = idk.SongArtist,
                             AlbumName = idk.AlbumName,
+                            
                         };
                         playListContentsDtos.Add(result);
                     }
@@ -214,6 +215,31 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 throw;
             }
             
+        }
+
+        public async Task<IEnumerable<PlaylistDTO>> GetPlaylistBySearch(string playlistName)
+        {
+            try
+            {
+                var searchResult= await _SC.Playlists.Where(x=>x.PlayListTitle.StartsWith(playlistName))
+                    .Select(x=>new PlaylistDTO
+                    {
+                        DateCreated = DateTime.Now,
+                        PlayListContents=x.PlayListContents.Trim(),
+                        PlayListId=x.PlayListId.Trim(),
+                        PlayListOwner = x.PlayListOwnerName.Trim(),
+                        PlayListOwnerId = x.PlayListOwner,
+                        PlayListTitle = x.PlayListTitle.Trim(),
+                        PlayListType = x.PlayListType.Trim(),
+                    })
+                    .ToListAsync();
+                return searchResult;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

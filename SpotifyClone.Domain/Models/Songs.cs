@@ -10,7 +10,6 @@ namespace SpotifyClone.Domain.Models
     {
         public int Id { get; set; }
         public string SongName { get; set; } = null!;
-        public DateTime DateAdded { get; set; }
         public int Duration { get; set; }
         public string SongArtist {  get; set; }=null!;
         public string AlbumName {  get; set; }=null!;

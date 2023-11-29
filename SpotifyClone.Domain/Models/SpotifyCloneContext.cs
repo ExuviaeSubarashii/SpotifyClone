@@ -59,6 +59,9 @@ namespace SpotifyClone.Domain.Models
                    .HasMaxLength(35)
                    .IsUnicode(false)
                    .IsFixedLength();
+                entity.Property(e => e.DateCreated)
+                    .IsUnicode(false)
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -102,9 +105,6 @@ namespace SpotifyClone.Domain.Models
             {
                 entity.Property(e => e.SongName)
                     .HasMaxLength(35)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-                entity.Property(e => e.DateAdded)
                     .IsUnicode(false)
                     .IsFixedLength();
                 entity.Property(e => e.Duration)

@@ -34,7 +34,8 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         PlayListOwner = userQuery.Id,
                         PlayListTitle = "Playlist# " + (playlistQuery.Count + 1),
                         PlayListType = "Playlist",
-                        PlayListOwnerName = userQuery.UserName
+                        PlayListOwnerName = userQuery.UserName,
+                        DateCreated=DateTime.Now,
                     };
                     _SP.Playlists.Add(newPlaylist);
                     userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim() + "," + newPlaylist.PlayListId.Trim();
