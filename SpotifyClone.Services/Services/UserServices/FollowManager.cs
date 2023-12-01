@@ -17,7 +17,7 @@ namespace SpotifyClone.Services.Services.UserServices
         {
             _SP = sP;
         }
-        public async Task<List<FollowingDTO>> GetFollowing(int id)
+        public async Task<IEnumerable<FollowingDTO>> GetFollowing(int id)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace SpotifyClone.Services.Services.UserServices
             }
             
         }
-        public async Task<List<FollowsDTO>> GetFollowers(int id)
+        public async Task<IEnumerable<FollowsDTO>> GetFollowers(int id)
         {
            
                 var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);

@@ -38,8 +38,16 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         DateCreated=DateTime.Now,
                     };
                     _SP.Playlists.Add(newPlaylist);
+                    if (userQuery.FavoritedPlaylists == null)
+                    {
+                        userQuery.FavoritedPlaylists = newPlaylist.PlayListId.Trim();
+                        _SP.SaveChanges();
+                    }
+                    else
+                    {
                     userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim() + "," + newPlaylist.PlayListId.Trim();
                     _SP.SaveChanges();
+                    }
                 }
             }
             catch (Exception)
@@ -51,6 +59,26 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         }
         //delete playlist
         public async Task DeletePlaylist(DeletePlaylistDTO deleteHandler)
+        {
+            try
+            {
+                var userQuery = _SP.Users.FirstOrDefault(x => x.UserToken == deleteHandler.UserToken);
+                var playlistToDelete = await _SP.Playlists.FirstOrDefaultAsync(x => x.PlayListId == deleteHandler.PlaylistId);
+
+                if (playlistToDelete != null)
+                {
+                    _SP.Playlists.Remove(playlistToDelete);
+                    _SP.SaveChanges(); // Save changes to the database
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+        public async Task RemovePlaylist(DeletePlaylistDTO deleteHandler)
         {
             try
             {

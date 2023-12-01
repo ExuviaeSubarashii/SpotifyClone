@@ -40,7 +40,7 @@ namespace SpotifyClone.Services.Services.SongServices
             }
             
         }
-        public async Task<List<SongsDTO>> GetAllSongs()
+        public async Task<IEnumerable<SongsDTO>> GetAllSongs()
         {
             try
             {

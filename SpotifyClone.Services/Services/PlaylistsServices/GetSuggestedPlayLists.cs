@@ -18,7 +18,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             _SC = SC;
         }
 
-        public async Task<List<SuggestedPlayListDTO>> GetAllAsync(string userToken)
+        public async Task<IEnumerable<SuggestedPlayListDTO>> GetAllAsync(string userToken)
         {
             try
             {

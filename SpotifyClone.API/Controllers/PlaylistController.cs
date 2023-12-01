@@ -65,7 +65,7 @@ namespace SpotifyClone.API.Controllers
            
                 if (!string.IsNullOrEmpty(userToken))
                 {
-                    List<SuggestedPlayListDTO> suggestedPlaylists = await _suggestedplayLists.GetAllAsync(userToken);
+                    IEnumerable<SuggestedPlayListDTO> suggestedPlaylists = await _suggestedplayLists.GetAllAsync(userToken);
                     return Ok(suggestedPlaylists);
                 }
                 else
@@ -80,7 +80,7 @@ namespace SpotifyClone.API.Controllers
            
                 if (!string.IsNullOrEmpty(playlistId))
                 {
-                    List<PlayListContents> suggestedPlaylists = await _allplayLists.GetAllPlayListContents(playlistId);
+                    IEnumerable<PlayListContents> suggestedPlaylists = await _allplayLists.GetAllPlayListContents(playlistId);
                     return Ok(suggestedPlaylists);
                 }
                 else
