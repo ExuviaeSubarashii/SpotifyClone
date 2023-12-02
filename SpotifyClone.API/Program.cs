@@ -16,6 +16,7 @@ builder.Services.AddScoped<SongsService>();
 builder.Services.AddScoped<UserProperties>();
 builder.Services.AddScoped<FollowManager>();
 builder.Services.AddScoped<PlaylistHandler>();
+builder.Services.AddScoped<UserProfileActions>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

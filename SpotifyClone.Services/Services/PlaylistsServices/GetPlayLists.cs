@@ -38,7 +38,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         {
                             if (item != "")
                             {
-
                                 var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
                                 PlaylistDTO playlist = new PlaylistDTO()
                                 {
@@ -88,7 +87,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 //}
                 else
                 {
-                    return new List<PlaylistDTO>();
+                    return Enumerable.Empty<PlaylistDTO>();
                 }
             }
             catch (Exception)

@@ -19,12 +19,13 @@ namespace SpotifyClone.API.Controllers
         private readonly GetSuggestedPlayLists _playLists;
         private readonly UserProperties _userProperties;
         private readonly FollowManager _followManager;
+        private readonly UserProfileActions _userProfileActions;
         private readonly IConfiguration _config;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
 
-        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties, FollowManager followManager)
+        public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties, FollowManager followManager, UserProfileActions userProfileActions)
         {
             _SC = SC;
             _authentication = authentication;
@@ -32,120 +33,142 @@ namespace SpotifyClone.API.Controllers
             _config = configuration;
             _userProperties = userProperties;
             _followManager = followManager;
+            _userProfileActions = userProfileActions;
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginDTO logindto)
         {
-                if (logindto.UserEmail != null || logindto.Password != null)
-                {
-                    return Ok(await _authentication.LoginWithEmailAsync(logindto));
-                }
-                else
-                { return BadRequest(); }
-
-        
-
+            if (logindto.UserEmail != null || logindto.Password != null)
+            {
+                return Ok(await _authentication.LoginWithEmailAsync(logindto));
+            }
+            else
+            { return BadRequest(); }
         }
         [HttpPost("Register")]
         public async Task<ActionResult> Register([FromBody] RegisterDTO register)
         {
-         
-                if (register != null)
+
+            if (register != null)
+            {
+                var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
+                if (!doesUserExist)
                 {
-                    var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
-                    if (!doesUserExist)
+                    var registerUser = new User()
                     {
-                        var registerUser = new User()
-                        {
-                            UserEmail = register.UserEmail.Trim(),
-                            UserName = register.UserName.Trim(),
-                            Password = register.UserPassword.Trim(),
-                            Followers = "0",
-                            Following = "0",
-                            UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),
-                        };
-                        _SC.Users.Add(registerUser);
-                        _SC.SaveChanges();
-                        return Ok();
-                    }
-                    else
-                    {
-                        return ValidationProblem();
-                    }
+                        UserEmail = register.UserEmail.Trim(),
+                        UserName = register.UserName.Trim(),
+                        Password = register.UserPassword.Trim(),
+                        Followers = "0",
+                        Following = "0",
+                        UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),
+                    };
+                    _SC.Users.Add(registerUser);
+                    _SC.SaveChanges();
+                    return Ok();
                 }
                 else
                 {
-                    return BadRequest();
+                    return ValidationProblem();
                 }
-          
+            }
+            else
+            {
+                return BadRequest();
+            }
+
 
         }
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser(string userToken)
         {
-          
-                bool isAuthed = _authentication.IsAuthenticated(userToken);
-                if (isAuthed)
-                    return Ok();
+
+            bool isAuthed = _authentication.IsAuthenticated(userToken);
+            if (isAuthed)
+                return Ok();
             else
             {
 
-                    return NotFound();
+                return NotFound();
             }
-            
-          
+
+
         }
         [HttpPost("GetUserProperties")]
         public async Task<ActionResult> GetUserPropertiess([FromBody] string userTokenValue)
         {
-           
-                if (userTokenValue != null)
-                {
-                    return Ok(await _userProperties.UserPropertiesGetterByToken(userTokenValue));
-                }
-                else
-                { return BadRequest(); }
 
-        
+            if (userTokenValue != null)
+            {
+                return Ok(await _userProperties.UserPropertiesGetterByToken(userTokenValue));
+            }
+            else
+            { return BadRequest(); }
+
+
         }
         [HttpPost("GetUserPropertiesById")]
         public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] int? userId)
         {
-           
-                if (userId != null)
-                {
-                    return Ok(await _userProperties.UserPropertiesGetterById(userId));
-                }
-                else
-                { return BadRequest(); }
 
-           
+            if (userId != null)
+            {
+                return Ok(await _userProperties.UserPropertiesGetterById(userId));
+            }
+            else
+            { return BadRequest(); }
+
+
         }
         [HttpPost("GetUserFollowings")]
         public async Task<ActionResult> GetUserFollowings([FromBody] FollowRequestDTO request)
         {
-           
-                if (request != null)
-                {
-                    return Ok(await _followManager.GetFollowing(request.UserId));
-                }
-                else
-                { return BadRequest(); }
-           
+
+            if (request != null)
+            {
+                return Ok(await _followManager.GetFollowing(request.UserId));
+            }
+            else
+            { return BadRequest(); }
+
 
         }
         [HttpPost("GetUserFollowers")]
         public async Task<ActionResult> GetUserFollowers([FromBody] FollowRequestDTO request)
         {
-                if (request != null)
-                {
-                    return Ok(await _followManager.GetFollowers(request.UserId));
+            if (request != null)
+            {
+                return Ok(await _followManager.GetFollowers(request.UserId));
 
-                }
-                else
-                { return BadRequest(); }
-           
+            }
+            else
+            { return BadRequest(); }
+
+        }
+        [HttpPost("ChangeEmail")]
+        public async Task<ActionResult> ChangeEmail([FromBody] UpdateProfileDTO updateDto)
+        {
+            if (!string.IsNullOrEmpty(updateDto.NewEmail) && !string.IsNullOrEmpty(updateDto.UserToken))
+            {
+                return Ok(await _userProfileActions.ChangeEmail(updateDto));
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult> ChangePassword([FromBody] UpdateProfileDTO updateDto)
+        {
+            if (!string.IsNullOrEmpty(updateDto.NewEmail) && !string.IsNullOrEmpty(updateDto.UserToken))
+            {
+                return Ok(await _userProfileActions.ChangePassword(updateDto));
+            }
+            else
+            {
+                return BadRequest("ERROR: Password can't be same / user not found / password is empty.");
+            }
         }
         public string CreateToken(LoginDTO request)
         {
