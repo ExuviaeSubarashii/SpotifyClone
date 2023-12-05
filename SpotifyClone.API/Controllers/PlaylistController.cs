@@ -92,14 +92,13 @@ namespace SpotifyClone.API.Controllers
         [HttpPost("CreatePlayList")]
         public async Task<ActionResult> CreatePlaylist([FromBody] CreatePlayListDTO handlerDto)
         {
-            await _playlistHandler.CreatePlaylist(handlerDto);
-            return Ok ();
+            return Ok (await _playlistHandler.CreatePlaylist(handlerDto));
         }
-        [HttpPost("AddNewContent")]
-        public async Task<ActionResult> AddNewContent([FromBody]UpdatePlaylistDTO handlerDto)
+        [HttpPost("UpdatePlaylist")]
+        public async Task<ActionResult> UpdatePlaylist([FromBody]UpdatePlaylistDTO handlerDto)
         {
-            await _playlistHandler.UpdatePlaylist(handlerDto);
-            return Ok();
+            
+            return Ok(await _playlistHandler.UpdatePlaylist(handlerDto));
         }
         [HttpPost("PlaylistSearch")]
         public async Task<ActionResult> PlaylistSearch([FromBody]PlaylistSearchDTO playlistName)

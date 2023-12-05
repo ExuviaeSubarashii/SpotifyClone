@@ -13,6 +13,7 @@ namespace SpotifyClone.Domain.Dtos
         public int Duration { get; set; }
         public string SongArtist { get; set; } = null!;
         public string AlbumName { get; set; } = null!;  
+        public string PlaylistName { get; set; } = null!;
 
     }
 }

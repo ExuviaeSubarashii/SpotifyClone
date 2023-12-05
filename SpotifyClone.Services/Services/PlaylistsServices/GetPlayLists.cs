@@ -39,25 +39,32 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                             if (item != "")
                             {
                                 var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
-                                PlaylistDTO playlist = new PlaylistDTO()
+                                if (idk != null)
                                 {
-                                    PlayListId = idk.PlayListId.Trim(),
-                                    PlayListOwner = idk.PlayListOwnerName.Trim(),
-                                    PlayListContents = idk.PlayListContents.Trim(),
-                                    PlayListType = idk.PlayListType.Trim(),
-                                    PlayListTitle = idk.PlayListTitle.Trim(),
-                                    PlayListCount = playlistarray.Count(),
-                                    PlayListOwnerId = idk.PlayListOwner,
-                                    DateCreated = idk.DateCreated,
-                                };
-                                playlistDtos.Add(playlist);
+
+                                    PlaylistDTO playlist = new PlaylistDTO()
+                                    {
+                                        PlayListId = idk.PlayListId.Trim(),
+                                        PlayListOwner = idk.PlayListOwnerName.Trim(),
+                                        PlayListContents = idk.PlayListContents.Trim(),
+                                        PlayListType = idk.PlayListType.Trim(),
+                                        PlayListTitle = idk.PlayListTitle.Trim(),
+                                        PlayListCount = playlistarray.Count(),
+                                        PlayListOwnerId = idk.PlayListOwner,
+                                        DateCreated = idk.DateCreated,
+                                        
+                                    };
+
+                                    playlistDtos.Add(playlist);
+                                }
+
                             }
                         }
                         return playlistDtos;
                     }
                     else
                     {
-                        return  Enumerable.Empty<PlaylistDTO>();
+                        return Enumerable.Empty<PlaylistDTO>();
                     }
                 }
 
@@ -208,7 +215,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                             SongName = idk.SongName,
                             SongArtist = idk.SongArtist,
                             AlbumName = idk.AlbumName,
-
+                            PlaylistName = _SC.Playlists.FirstOrDefault(x => x.PlayListId == id.Trim()).PlayListTitle
                         };
                         playListContentsDtos.Add(result);
                     }
@@ -226,7 +233,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             }
 
         }
-
         public async Task<IEnumerable<PlaylistDTO>> GetPlaylistBySearch(string playlistName)
         {
             try
