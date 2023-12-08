@@ -8,7 +8,7 @@ namespace SpotifyClone.Domain.Dtos
 {
     public class DeletePlaylistDTO
     {
-        public string PlaylistId { get; set; } = null!;
+        public string? PlaylistId { get; set; } = null!;
         public string UserToken { get; set; } = null!;
     }
 }

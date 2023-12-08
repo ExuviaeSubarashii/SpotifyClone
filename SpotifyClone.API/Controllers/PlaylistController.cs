@@ -106,5 +106,15 @@ namespace SpotifyClone.API.Controllers
            
             return Ok(await _allplayLists.GetPlaylistBySearch(playlistName.PlaylistName));
         }
+        [HttpPost("DeletePlaylist")]
+        public async Task <ActionResult> DeletePlaylist([FromBody]DeletePlaylistDTO deleteHandler)
+        {
+            return Ok(await _playlistHandler.DeletePlaylist(deleteHandler));
+        }
+        [HttpPost("DeleteFromJustYourLibrary")]
+        public async Task<ActionResult> DeleteFromJustLibrary([FromBody] DeletePlaylistDTO deleteHandler)
+        {
+            return Ok(await _playlistHandler.DeleteFromJustYourLibrary(deleteHandler));
+        }
     }
 }

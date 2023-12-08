@@ -21,81 +21,63 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             try
             {
                 var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
-
-                List<PlaylistDTO> playlistDtos = new();
-
-                var playlistIds = await _SC.Users.Where(x => x.Id == user.Id).ToListAsync();
-                if (user.FavoritedPlaylists.Trim() != "")
+                if (user is not null)
                 {
-                    string[] playlistarray = new string[0];
-                    foreach (var item in playlistIds)
+
+                    List<PlaylistDTO> playlistDtos = new();
+                    var playlistIds = await _SC.Users.Where(x => x.Id == user.Id).ToListAsync();
+
+                    if (user.FavoritedPlaylists.Trim() != "")
                     {
-                        playlistarray = item.FavoritedPlaylists.Trim().Split(',');
-                    }
-                    if (playlistIds.Count > 0)
-                    {
-                        foreach (var item in playlistarray)
+                        string[] playlistarray = new string[0];
+                        foreach (var item in playlistIds)
                         {
-                            if (item != "")
-                            {
-                                var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
-                                if (idk != null)
-                                {
-
-                                    PlaylistDTO playlist = new PlaylistDTO()
-                                    {
-                                        PlayListId = idk.PlayListId.Trim(),
-                                        PlayListOwner = idk.PlayListOwnerName.Trim(),
-                                        PlayListContents = idk.PlayListContents.Trim(),
-                                        PlayListType = idk.PlayListType.Trim(),
-                                        PlayListTitle = idk.PlayListTitle.Trim(),
-                                        PlayListCount = playlistarray.Count(),
-                                        PlayListOwnerId = idk.PlayListOwner,
-                                        DateCreated = idk.DateCreated,
-                                        
-                                    };
-
-                                    playlistDtos.Add(playlist);
-                                }
-
-                            }
+                            playlistarray = item.FavoritedPlaylists.Trim().Split(',');
                         }
-                        return playlistDtos;
+                        if (playlistIds.Count > 0)
+                        {
+                            foreach (var item in playlistarray)
+                            {
+                                if (item != "")
+                                {
+                                    var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
+                                    if (idk != null)
+                                    {
+                                        PlaylistDTO playlist = new PlaylistDTO()
+                                        {
+                                            PlayListId = idk.PlayListId.Trim(),
+                                            PlayListOwner = idk.PlayListOwnerName.Trim(),
+                                            PlayListContents = idk.PlayListContents.Trim(),
+                                            PlayListType = idk.PlayListType.Trim(),
+                                            PlayListTitle = idk.PlayListTitle.Trim(),
+                                            PlayListCount = playlistarray.Count(),
+                                            PlayListOwnerId = idk.PlayListOwner,
+                                            DateCreated = idk.DateCreated
+                                        };
+                                        playlistDtos.Add(playlist);
+                                    }
+                                }
+                            }
+                            return playlistDtos;
+                        }
+
+                        else
+                        {
+                            return Enumerable.Empty<PlaylistDTO>();
+                        }
                     }
                     else
                     {
                         return Enumerable.Empty<PlaylistDTO>();
                     }
+
                 }
-
-                //dont delete this
-                //var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id).ToListAsync();
-
-                //if (playlists != null)
-                //{
-                //    List<PlaylistDTO> playlistDtos = new();
-
-                //    for (int i = 0; i < playlists.Count; i++)
-                //    {
-                //        var playlistData = playlists.ToList()[i];
-                //        PlaylistDTO playlist = new PlaylistDTO()
-                //        {
-                //            PlayListId = playlistData.PlayListId.Trim(),
-                //            PlayListOwner = user.UserName.Trim(),
-                //            PlayListContents = playlistData.PlayListContents.Trim(),
-                //            PlayListType = playlistData.PlayListType.Trim(),
-                //            PlayListTitle = playlistData.PlayListTitle.Trim(),
-                //            PlayListCount = playlistData.PlayListContents.Trim().Count(),
-                //            PlayListOwnerId=playlistData.PlayListOwner
-                //        };
-                //        playlistDtos.Add(playlist);
-                //    }
-                //    return playlistDtos;
-                //}
                 else
                 {
                     return Enumerable.Empty<PlaylistDTO>();
                 }
+            
+
             }
             catch (Exception)
             {

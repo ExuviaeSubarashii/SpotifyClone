@@ -17,7 +17,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             _SP = sP;
             _getPlayLists = getPlayLists;
         }
-        //create playlist
         public async Task<string> CreatePlaylist(CreatePlayListDTO playlistHandler)
         {
             try
@@ -67,27 +66,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             }
 
         }
-        //delete playlist
-        public async Task DeletePlaylist(DeletePlaylistDTO deleteHandler)
-        {
-            try
-            {
-                var userQuery = _SP.Users.FirstOrDefault(x => x.UserToken == deleteHandler.UserToken);
-                var playlistToDelete = await _SP.Playlists.FirstOrDefaultAsync(x => x.PlayListId == deleteHandler.PlaylistId);
-
-                if (playlistToDelete != null)
-                {
-                    _SP.Playlists.Remove(playlistToDelete);
-                    _SP.SaveChanges(); // Save changes to the database
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
         public async Task RemovePlaylist(DeletePlaylistDTO deleteHandler)
         {
             try
@@ -98,7 +76,6 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 if (playlistToDelete != null)
                 {
                     _SP.Playlists.Remove(playlistToDelete);
-                    _SP.SaveChanges(); // Save changes to the database
                 }
             }
             catch (Exception)
@@ -108,7 +85,40 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             }
 
         }
-        //update playlist
+        //use this only if the user is not the creater of the playlist
+        public async Task<IEnumerable<PlaylistDTO>> DeleteFromJustYourLibrary(DeletePlaylistDTO deleteHandler)
+        {
+            var userquery = _SP.Users.FirstOrDefault(x => x.UserToken == deleteHandler.UserToken);
+            var playlistquery = userquery.FavoritedPlaylists.Split(',').ToList();
+            playlistquery.Remove(deleteHandler.PlaylistId);
+            playlistquery.RemoveAll(item => item == "");
+            var updatedquery = "";
+            for (int i = 0; i < playlistquery.Count; i++)
+            {
+                updatedquery += "," + playlistquery[i];
+            }
+            userquery.FavoritedPlaylists = updatedquery;
+            _SP.SaveChanges();
+            return await _getPlayLists.GetAllPlayLists(deleteHandler.UserToken);
+        }
+        //delete playlist from your own library
+        public async Task<IEnumerable<PlaylistDTO>> DeletePlaylist(DeletePlaylistDTO deleteHandler)
+        {
+            var userquery= _SP.Users.FirstOrDefault(x=>x.UserToken==deleteHandler.UserToken);
+            var playlistquery = userquery.FavoritedPlaylists.Split(',').ToList();
+            playlistquery.Remove(deleteHandler.PlaylistId);
+            playlistquery.RemoveAll(item => item == "");
+            var updatedquery="";
+            for (int i = 0; i < playlistquery.Count; i++)
+            {
+                updatedquery += ","+playlistquery[i];
+            }
+            userquery.FavoritedPlaylists= updatedquery;
+            await RemovePlaylist(deleteHandler);
+            _SP.SaveChanges();
+
+            return await _getPlayLists.GetAllPlayLists(deleteHandler.UserToken);
+        }
         public async Task<string> UpdatePlaylist(UpdatePlaylistDTO updateDTO)
         {
             try
@@ -129,44 +139,44 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                             throw;
                         }
                 }
-                    if (updateDTO.UpdateWay == "Add Content")
-                        try
+                if (updateDTO.UpdateWay == "Add Content")
+                    try
+                    {
+                        if (playlistQuery.PlayListContents.Contains(updateDTO.PlayListContents) != true)
                         {
-                            if (playlistQuery.PlayListContents.Contains(updateDTO.PlayListContents)!=true)
-                            {
 
                             playlistQuery.PlayListContents = playlistQuery.PlayListContents.Trim() + ',' + updateDTO.PlayListContents.Trim();
                             _SP.SaveChanges();
                             return $"Added Song {updateDTO.PlayListContents} to {playlistQuery.PlayListTitle}";
-                            }
-                            else
-                            {
-                                return "This Song Already Exists in This Playlist.";
-                            }
                         }
-                        catch (Exception)
+                        else
                         {
-                            throw;
-                        }
-                    if (updateDTO.UpdateWay == "Remove Song")
-                    {
-                        try
-                        {
-                            List<string> songListWithoutEmptyStrings = playlistQuery.PlayListContents.Trim().Split(',').ToList();
-                            songListWithoutEmptyStrings.RemoveAll(item => item == "");
-                            var updatedSongList = songListWithoutEmptyStrings.ToList();
-
-                            var resultlist = updatedSongList.Where(x => x != updateDTO.PlayListContents.Trim()).ToList();
-                            playlistQuery.PlayListContents = string.Join(",", resultlist);
-                            _SP.SaveChanges();
-                        return $"Removed song from {playlistQuery.PlayListTitle}";
-                        }
-                        catch (Exception)
-                        {
-
-                            throw;
+                            return "This Song Already Exists in This Playlist.";
                         }
                     }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                if (updateDTO.UpdateWay == "Remove Song")
+                {
+                    try
+                    {
+                        List<string> songListWithoutEmptyStrings = playlistQuery.PlayListContents.Trim().Split(',').ToList();
+                        songListWithoutEmptyStrings.RemoveAll(item => item == "");
+                        var updatedSongList = songListWithoutEmptyStrings.ToList();
+
+                        var resultlist = updatedSongList.Where(x => x != updateDTO.PlayListContents.Trim()).ToList();
+                        playlistQuery.PlayListContents = string.Join(",", resultlist);
+                        _SP.SaveChanges();
+                        return $"Removed song from {playlistQuery.PlayListTitle}";
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                }
                 else
                 {
                     return "Failed";
