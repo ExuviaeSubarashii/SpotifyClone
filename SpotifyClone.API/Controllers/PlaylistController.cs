@@ -54,7 +54,7 @@ namespace SpotifyClone.API.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest("User Token Required");
                 }
 
 

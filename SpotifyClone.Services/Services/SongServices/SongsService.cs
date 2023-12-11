@@ -18,63 +18,50 @@ namespace SpotifyClone.Services.Services.SongServices
             _SP = sP;
         }
 
-        public async Task<CurrentSongDTO> SetCurrentSong(int songId)
+        public async Task<CurrentSongDTO?> SetCurrentSong(int songId)
         {
             try
             {
-                CurrentSongDTO currentSongDTO = new();
+                var getSongProperties = await _SP.Songs.Where(x => x.Id == songId).Select(x => new CurrentSongDTO
+                {
+                    Duration = x.Duration,
+                    AlbumName = x.AlbumName,
+                    Id = x.Id,
+                    SongArtist = x.SongArtist,
+                    SongName = x.SongName
+                }).FirstOrDefaultAsync();
 
-                var getSongProperties = await _SP.Songs.FirstOrDefaultAsync(x => x.Id == songId);
+                return getSongProperties??new CurrentSongDTO();
 
-                currentSongDTO.SongName = getSongProperties.SongName.Trim();
-                currentSongDTO.Duration = getSongProperties.Duration;
-                currentSongDTO.SongArtist = getSongProperties.SongArtist.Trim();
-                currentSongDTO.AlbumName = getSongProperties.AlbumName.Trim();
-
-                return currentSongDTO;
             }
             catch (Exception)
             {
-
                 throw;
             }
-            
+
         }
         public async Task<IEnumerable<SongsDTO>> GetAllSongs()
         {
             try
             {
-                var songs = await _SP.Songs.ToListAsync();
+                var songs = await _SP.Songs.Select(x => new SongsDTO
+                {
+                    Duration = x.Duration,
+                    SongName = x.SongName,
+                    SongArtist = x.SongArtist,
+                    AlbumName = x.AlbumName,
+                    SongId=x.Id
+                }).ToListAsync();
 
-                if (songs.Count > 0)
-                {
-                    List<SongsDTO> songsDtos = new();
-                    for (int i = 0; i < songs.Count; i++)
-                    {
-                        var songlistData = songs.ToList()[i];
-                        SongsDTO songsDTO = new SongsDTO()
-                        {
-                            AlbumName = songlistData.AlbumName.Trim(),
-                            SongName = songlistData.SongName.Trim(),
-                            SongArtist = songlistData.SongArtist.Trim(),
-                            Duration = songlistData.Duration,
-                            SongId = songlistData.Id
-                        };
-                        songsDtos.Add(songsDTO);
-                    }
-                    return songsDtos;
-                }
-                else
-                {
-                    return new List<SongsDTO>();
-                }
+                return songs ?? Enumerable.Empty<SongsDTO>();
+
             }
             catch (Exception)
             {
 
                 throw;
             }
-            
+
         }
     }
 }

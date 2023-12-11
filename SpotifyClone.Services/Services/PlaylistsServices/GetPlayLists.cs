@@ -21,63 +21,29 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             try
             {
                 var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
-                if (user is not null)
-                {
-
-                    List<PlaylistDTO> playlistDtos = new();
-                    var playlistIds = await _SC.Users.Where(x => x.Id == user.Id).ToListAsync();
-
-                    if (user.FavoritedPlaylists.Trim() != "")
-                    {
-                        string[] playlistarray = new string[0];
-                        foreach (var item in playlistIds)
-                        {
-                            playlistarray = item.FavoritedPlaylists.Trim().Split(',');
-                        }
-                        if (playlistIds.Count > 0)
-                        {
-                            foreach (var item in playlistarray)
-                            {
-                                if (item != "")
-                                {
-                                    var idk = await _SC.Playlists.Where(x => x.PlayListId == item).FirstOrDefaultAsync();
-                                    if (idk != null)
-                                    {
-                                        PlaylistDTO playlist = new PlaylistDTO()
-                                        {
-                                            PlayListId = idk.PlayListId.Trim(),
-                                            PlayListOwner = idk.PlayListOwnerName.Trim(),
-                                            PlayListContents = idk.PlayListContents.Trim(),
-                                            PlayListType = idk.PlayListType.Trim(),
-                                            PlayListTitle = idk.PlayListTitle.Trim(),
-                                            PlayListCount = playlistarray.Count(),
-                                            PlayListOwnerId = idk.PlayListOwner,
-                                            DateCreated = idk.DateCreated
-                                        };
-                                        playlistDtos.Add(playlist);
-                                    }
-                                }
-                            }
-                            return playlistDtos;
-                        }
-
-                        else
-                        {
-                            return Enumerable.Empty<PlaylistDTO>();
-                        }
-                    }
-                    else
-                    {
-                        return Enumerable.Empty<PlaylistDTO>();
-                    }
-
-                }
-                else
+                if (user == null)
                 {
                     return Enumerable.Empty<PlaylistDTO>();
                 }
-            
 
+                var playlistIds = user.FavoritedPlaylists.Trim().Split(',');
+
+                var playlistDtos = await _SC.Playlists
+                    .Where(p => playlistIds.Contains(p.PlayListId))
+                    .Select(p => new PlaylistDTO
+                    {
+                        PlayListId = p.PlayListId.Trim(),
+                        PlayListOwner = p.PlayListOwnerName.Trim(),
+                        PlayListContents = p.PlayListContents.Trim(),
+                        PlayListType = p.PlayListType.Trim(),
+                        PlayListTitle = p.PlayListTitle.Trim(),
+                        PlayListCount = playlistIds.Count(),
+                        PlayListOwnerId = p.PlayListOwner,
+                        DateCreated = p.DateCreated
+                    })
+                    .ToListAsync();
+
+                return playlistDtos;
             }
             catch (Exception)
             {
@@ -92,33 +58,21 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             {
                 var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
 
-                var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType).ToListAsync();
-                if (playlists != null)
-                {
-
-                    List<PlaylistDTO> playlistDtos = new();
-
-                    for (int i = 0; i < playlists.Count; i++)
+                var playlists = await _SC.Playlists.Where(x => x.PlayListOwner == user.Id && x.PlayListType == playlistType)
+                    .Select(p => new PlaylistDTO
                     {
-                        var playlistData = playlists.ToList()[i];
-                        PlaylistDTO playlist = new PlaylistDTO()
-                        {
-                            PlayListId = playlistData.PlayListId.Trim(),
-                            PlayListOwner = user.UserName.Trim(),
-                            PlayListContents = playlistData.PlayListContents.Trim(),
-                            PlayListType = playlistData.PlayListType.Trim(),
-                            PlayListTitle = playlistData.PlayListTitle.Trim(),
-                            PlayListCount = playlistData.PlayListContents.Trim().Count()
-
-                        };
-                        playlistDtos.Add(playlist);
-                    }
-                    return playlistDtos;
-                }
-                else
-                {
-                    return new List<PlaylistDTO>();
-                }
+                        PlayListId = p.PlayListId.Trim(),
+                        PlayListOwner = p.PlayListOwnerName.Trim(),
+                        PlayListContents = p.PlayListContents.Trim(),
+                        PlayListType = p.PlayListType.Trim(),
+                        PlayListTitle = p.PlayListTitle.Trim(),
+                        PlayListCount = +1,
+                        PlayListOwnerId = p.PlayListOwner,
+                        DateCreated = p.DateCreated
+                    })
+                    .ToListAsync();
+                
+                    return playlists??new List<PlaylistDTO>();
             }
             catch (Exception)
             {
@@ -172,45 +126,41 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         {
             try
             {
-                List<PlayListContents> playListContentsDtos = new List<PlayListContents>();
+                var playlist = await _SC.Playlists
+                    .Where(x => x.PlayListId == id)
+                    .FirstOrDefaultAsync();
 
-                var playlist = await _SC.Playlists.Where(x => x.PlayListId == id).ToListAsync();
-                string[] songList = new string[0];
-
-                foreach (var item in playlist)
+                if (playlist == null || string.IsNullOrWhiteSpace(playlist.PlayListContents))
                 {
-                    songList = item.PlayListContents.Trim().Split(',');
+                    return Enumerable.Empty<PlayListContents>();
                 }
-                if (playlist.Count > 0)
-                {
-                    List<string> songListWithoutEmptyStrings = songList.ToList();
-                    songListWithoutEmptyStrings.RemoveAll(item => item == "");
-                    string[] updatedSongList = songListWithoutEmptyStrings.ToArray();
 
-                    foreach (var item in updatedSongList)
+                var songList = playlist.PlayListContents.Trim().Split(',')
+                    .Where(item => !string.IsNullOrWhiteSpace(item))
+                    .ToArray();
+
+                if (songList.Length == 0)
+                {
+                    return Enumerable.Empty<PlayListContents>();
+                }
+
+                var playListContentsDtos = await _SC.Songs
+                    .Where(x => songList.Contains(x.Id.ToString()))
+                    .Select(song => new PlayListContents
                     {
-                        var idk = await _SC.Songs.Where(x => x.Id == int.Parse(item)).FirstOrDefaultAsync();
-                        var result = new PlayListContents()
-                        {
-                            SongId = idk.Id,
-                            Duration = idk.Duration,
-                            SongName = idk.SongName,
-                            SongArtist = idk.SongArtist,
-                            AlbumName = idk.AlbumName,
-                            PlaylistName = _SC.Playlists.FirstOrDefault(x => x.PlayListId == id.Trim()).PlayListTitle
-                        };
-                        playListContentsDtos.Add(result);
-                    }
-                    return playListContentsDtos;
-                }
-                else
-                {
-                    return new List<PlayListContents>();
-                }
+                        SongId = song.Id,
+                        Duration = song.Duration,
+                        SongName = song.SongName,
+                        SongArtist = song.SongArtist,
+                        AlbumName = song.AlbumName,
+                        PlaylistName = playlist.PlayListTitle.Trim()
+                    })
+                    .ToListAsync();
+
+                return playListContentsDtos;
             }
             catch (Exception)
             {
-
                 throw;
             }
 

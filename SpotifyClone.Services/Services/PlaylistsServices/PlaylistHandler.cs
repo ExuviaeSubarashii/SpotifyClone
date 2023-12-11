@@ -85,7 +85,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             }
 
         }
-        //use this only if the user is not the creater of the playlist
+        //use this only if the user is not the creater of the playlist and just deletes from the user's favoritedplaylist column not from playlist table
         public async Task<IEnumerable<PlaylistDTO>> DeleteFromJustYourLibrary(DeletePlaylistDTO deleteHandler)
         {
             var userquery = _SP.Users.FirstOrDefault(x => x.UserToken == deleteHandler.UserToken);
@@ -93,27 +93,22 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             playlistquery.Remove(deleteHandler.PlaylistId);
             playlistquery.RemoveAll(item => item == "");
             var updatedquery = "";
-            for (int i = 0; i < playlistquery.Count; i++)
-            {
-                updatedquery += "," + playlistquery[i];
-            }
+            updatedquery = string.Join(",", playlistquery);
+
             userquery.FavoritedPlaylists = updatedquery;
             _SP.SaveChanges();
             return await _getPlayLists.GetAllPlayLists(deleteHandler.UserToken);
         }
-        //delete playlist from your own library
+        //delete playlist from your own library and from playlist table
         public async Task<IEnumerable<PlaylistDTO>> DeletePlaylist(DeletePlaylistDTO deleteHandler)
         {
-            var userquery= _SP.Users.FirstOrDefault(x=>x.UserToken==deleteHandler.UserToken);
+            var userquery = _SP.Users.FirstOrDefault(x => x.UserToken == deleteHandler.UserToken);
             var playlistquery = userquery.FavoritedPlaylists.Split(',').ToList();
             playlistquery.Remove(deleteHandler.PlaylistId);
             playlistquery.RemoveAll(item => item == "");
-            var updatedquery="";
-            for (int i = 0; i < playlistquery.Count; i++)
-            {
-                updatedquery += ","+playlistquery[i];
-            }
-            userquery.FavoritedPlaylists= updatedquery;
+            var updatedquery = "";
+            updatedquery = string.Join(",", playlistquery);
+            userquery.FavoritedPlaylists = updatedquery;
             await RemovePlaylist(deleteHandler);
             _SP.SaveChanges();
 
