@@ -1,5 +1,6 @@
 using SpotifyClone.Domain.Models;
 using SpotifyClone.Services.Services.PlaylistsServices;
+using SpotifyClone.Services.Services.SearchServices;
 using SpotifyClone.Services.Services.SongServices;
 using SpotifyClone.Services.Services.UserServices;
 
@@ -17,6 +18,7 @@ builder.Services.AddScoped<UserProperties>();
 builder.Services.AddScoped<FollowManager>();
 builder.Services.AddScoped<PlaylistHandler>();
 builder.Services.AddScoped<UserProfileActions>();
+builder.Services.AddScoped<GetSearchResults>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

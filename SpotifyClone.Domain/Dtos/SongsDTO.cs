@@ -8,10 +8,10 @@ namespace SpotifyClone.Domain.Dtos
 {
     public class SongsDTO
     {
-        public int SongId { get; set; }
-        public string SongName { get; set; } = null!;
-        public int Duration { get; set; }
-        public string SongArtist { get; set; } = null!;
-        public string AlbumName { get; set; } = null!;
+        public int? SongId { get; set; }
+        public string? SongName { get; set; } = null!;
+        public int? Duration { get; set; }
+        public string? SongArtist { get; set; } = null!;
+        public string? AlbumName { get; set; } = null!;
     }
 }
