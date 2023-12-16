@@ -22,78 +22,109 @@ namespace SpotifyClone.Services.Services.UserServices
             try
             {
                 var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
-                if (user != null)
+                if (user == null)
                 {
+                    return Enumerable.Empty<FollowingDTO>();
+                }
+                var followingListIds = user.Following.Trim().Split(',');
+                var followingdtos = await _SP.Users.Where(x => followingListIds.Contains(x.Id.ToString())).Select(x => new FollowingDTO
+                {
+                    UserId = x.Id,
+                    UserName = x.UserName
+                }).ToListAsync();
 
-                    string[] list = user.Following.Split(",");
-                    if (user != null)
-                    {
-                        List<FollowingDTO> followinglist = new();
-                        for (int i = 0; i < list.Length; i++)
-                        {
-                            var followingData = list.ToList()[i];
-                            var followingQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followingData));
-                            FollowingDTO following = new FollowingDTO()
-                            {
-                                UserId = followingQuery.Id,
-                                UserName = followingQuery.UserName.Trim(),
-                            };
-                            followinglist.Add(following);
-                        }
-                        return followinglist;
-                    }
-                    else
-                    {
-                        return new List<FollowingDTO>();
-                    }
-                }
-                else
-                {
-                    return new List<FollowingDTO>();
-                }
+                return followingdtos;
             }
             catch (Exception)
             {
 
                 throw;
             }
-            
+
         }
         public async Task<IEnumerable<FollowsDTO>> GetFollowers(int id)
         {
-           
+            try
+            {
                 var user = await _SP.Users.FirstOrDefaultAsync(x => x.Id == id);
-                if (user != null)
+                if (user == null)
                 {
+                    return Enumerable.Empty<FollowsDTO>();
+                }
+                var followsListIds = user.Followers.Trim().Split(',');
+                var followsdto = await _SP.Users.Where(x => followsListIds.Contains(x.Id.ToString())).Select(x => new FollowsDTO
+                {
+                    UserId = x.Id,
+                    UserName = x.UserName
+                }).ToListAsync();
 
-                    string[] list = user.Followers.Split(",");
-                    if (user != null)
-                    {
-                        List<FollowsDTO> followerlist = new();
-                        for (int i = 0; i < list.Length; i++)
-                        {
-                            var followersData = list.ToList()[i].Trim();
-                            var x=int.Parse(followersData);
-                            var followersQuery = await _SP.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(followersData));
-                            FollowsDTO following = new FollowsDTO()
-                            {
-                                UserId = followersQuery.Id,
-                                UserName = followersQuery.UserName.Trim(),
-                            };
-                            followerlist.Add(following);
-                        }
-                        return followerlist;
-                    }
-                    else
-                    {
-                        return new List<FollowsDTO>();
-                    }
-                }
-                else
+                return followsdto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        public async Task<bool> IsFollowedOrNot(int profileId, string userToken)
+        {
+            var userQuery = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
+
+            if (userQuery != null)
+            {
+                var followinglist = userQuery.Following.Trim().Split(',').ToList();
+                followinglist.RemoveAll(item => item == "");
+                foreach (var item in followinglist)
                 {
-                    return new List<FollowsDTO>();
+                    if (item == profileId.ToString())
+                    {
+                        return true;
+                    }
                 }
-          
+            }
+            return false;
+
+        }
+        public async Task<IEnumerable<FollowingDTO>> FollowUser(FollowOrUnfollowDto FTO) 
+        {
+            //get the current user
+            var currentUser = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == FTO.UserToken);
+            //get the targeted user
+            var targetUser = await _SP.Users.FirstOrDefaultAsync(x => x.Id == FTO.TargetUserId);
+
+            //add target user's id and current user's id to eachother
+
+            currentUser.Following = currentUser.Following.Trim() + "," + targetUser.Id;
+            targetUser.Followers = targetUser.Followers.Trim() + "," + currentUser.Id;
+            _SP.SaveChanges();
+            return await GetFollowing(currentUser.Id);
+        } 
+        public async Task<IEnumerable<FollowingDTO>> UnFollowUser(FollowOrUnfollowDto FTO) 
+        {
+            //get the current user
+            var currentUser = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == FTO.UserToken);
+            //get the targeted user
+            var targetUser = await _SP.Users.FirstOrDefaultAsync(x => x.Id == FTO.TargetUserId);
+
+            //remove currentUser's id from targetUser's followers box && remove targetUser from currentUser's following box
+
+            //set the current user
+            List<string> currentUserFollowing =currentUser.Following.Trim().Split(',').ToList();
+            currentUserFollowing.RemoveAll(x => x == FTO.TargetUserId.ToString());
+            currentUser.Following = string.Join(',', currentUserFollowing);
+
+            //set the target user
+            List<string>targetUserFollowing = targetUser.Followers.Trim().Split(',').ToList();
+            targetUserFollowing.RemoveAll(x => x == currentUser.Id.ToString());
+            targetUser.Followers = string.Join(',', targetUserFollowing);
+
+
+            _SP.SaveChanges();
+
+            return await GetFollowing(currentUser.Id);
             
         }
     }

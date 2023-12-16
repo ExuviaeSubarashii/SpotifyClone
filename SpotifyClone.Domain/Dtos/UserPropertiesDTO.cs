@@ -12,5 +12,6 @@ namespace SpotifyClone.Domain.Dtos
         public int? Followers { get; set; } = null!;
         public int? Following { get; set; } = null!;
         public int? UserId { get; set; }
+        public bool? IsFollowing { get; set; }
     }
 }

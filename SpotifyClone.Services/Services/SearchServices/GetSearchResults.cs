@@ -52,6 +52,7 @@ namespace SpotifyClone.Services.Services.SearchServices
                 .Where(x => x.UserName.Contains(input))
                 .Select(u => new UserDTO
                 {
+                    Id= u.Id,
                     UserName = u.UserName.Trim(),
                     Following = u.Following.Trim(),
                     Followers = u.Followers.Trim(),

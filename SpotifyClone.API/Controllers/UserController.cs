@@ -109,12 +109,12 @@ namespace SpotifyClone.API.Controllers
 
         }
         [HttpPost("GetUserPropertiesById")]
-        public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] int? userId)
+        public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] FollowingOrNotDTO fonDTO)
         {
 
-            if (userId != null)
+            if (fonDTO != null)
             {
-                return Ok(await _userProperties.UserPropertiesGetterById(userId));
+                return Ok(await _userProperties.UserPropertiesGetterById(fonDTO));
             }
             else
             { return BadRequest(); }
@@ -169,6 +169,16 @@ namespace SpotifyClone.API.Controllers
             {
                 return BadRequest("ERROR: Password can't be same / user not found / password is empty.");
             }
+        }
+        [HttpPost("FollowUser")]
+        public async Task<ActionResult> FollowUser([FromBody] FollowOrUnfollowDto FTO) 
+        {
+            return Ok(await _followManager.FollowUser(FTO));
+        }
+        [HttpPost("UnFollowUser")]
+        public async Task<ActionResult> UnFollowUser([FromBody] FollowOrUnfollowDto FTO) 
+        {
+            return Ok(await _followManager.UnFollowUser(FTO));
         }
         public string CreateToken(LoginDTO request)
         {

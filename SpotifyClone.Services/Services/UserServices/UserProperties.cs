@@ -12,9 +12,11 @@ namespace SpotifyClone.Services.Services.UserServices
     public class UserProperties
     {
         private readonly SpotifyCloneContext _SP;
-        public UserProperties(SpotifyCloneContext sP)
+        private readonly FollowManager _followManager;
+        public UserProperties(SpotifyCloneContext sP, FollowManager followManager)
         {
             _SP = sP;
+            _followManager = followManager;
         }
         public async Task<UserPropertiesDTO> UserPropertiesGetterByToken(string userTokenValue)
         {
@@ -46,13 +48,13 @@ namespace SpotifyClone.Services.Services.UserServices
             }
             
         }
-        public async Task<UserPropertiesDTO> UserPropertiesGetterById(int? userId)
+        public async Task<UserPropertiesDTO> UserPropertiesGetterById(FollowingOrNotDTO followingOrNotDTO)
         {
             try
             {
                 UserPropertiesDTO userPropertiesDTO = new();
 
-                var properties = await _SP.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+                var properties = await _SP.Users.Where(x => x.Id == followingOrNotDTO.CurrentlyViewedUserProfileId).FirstOrDefaultAsync();
                 if (properties != null)
                 {
                     userPropertiesDTO = new UserPropertiesDTO()
@@ -60,7 +62,8 @@ namespace SpotifyClone.Services.Services.UserServices
                         UserName = properties.UserName.Trim(),
                         Followers = properties.Followers.Trim().Length,
                         Following = properties.Following.Trim().Length,
-                        UserId = properties.Id
+                        UserId = properties.Id,
+                        IsFollowing=await _followManager.IsFollowedOrNot(followingOrNotDTO.CurrentlyViewedUserProfileId,followingOrNotDTO.CurrentViewerUserToken)
                     };
                     return userPropertiesDTO;
                 }
