@@ -71,8 +71,8 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         DateCreated = p.DateCreated
                     })
                     .ToListAsync();
-                
-                    return playlists??new List<PlaylistDTO>();
+
+                return playlists ?? new List<PlaylistDTO>();
             }
             catch (Exception)
             {
@@ -122,12 +122,12 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             }
 
         }
-        public async Task<IEnumerable<PlayListContents>> GetAllPlayListContents(string id)
+        public async Task<IEnumerable<PlayListContents>> GetAllPlayListContents(GetPlaylistContentsRequestDTO gpDTO)
         {
             try
             {
                 var playlist = await _SC.Playlists
-                    .Where(x => x.PlayListId == id)
+                    .Where(x => x.PlayListId == gpDTO.PlaylistId)
                     .FirstOrDefaultAsync();
 
                 if (playlist == null || string.IsNullOrWhiteSpace(playlist.PlayListContents))
@@ -153,7 +153,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                         SongName = song.SongName,
                         SongArtist = song.SongArtist,
                         AlbumName = song.AlbumName,
-                        PlaylistName = playlist.PlayListTitle.Trim()
+                        PlaylistName = playlist.PlayListTitle.Trim(),
                     })
                     .ToListAsync();
 
@@ -182,6 +182,23 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                     })
                     .ToListAsync();
                 return searchResult;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<bool> IsPlaylistFavorited(string userToken, string playListId)
+        {
+            try
+            {
+                var userQuery = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
+                if (userQuery.FavoritedPlaylists.Trim().Split(',').Contains(playListId))
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {

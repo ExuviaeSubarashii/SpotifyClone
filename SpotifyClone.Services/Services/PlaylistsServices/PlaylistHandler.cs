@@ -183,5 +183,26 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
                 throw;
             }
         }
+        public async Task<IEnumerable<PlaylistDTO>> AddToFavorites(AddPlaylistToFavoritesDTO aptDTO)
+        {
+            try
+            {
+                var userQuery = await _SP.Users.FirstOrDefaultAsync(x => x.UserToken == aptDTO.UserToken);
+                var countOfPlaylist=userQuery.FavoritedPlaylists.Trim().Split(',').Count();
+                if (countOfPlaylist>=27)
+                {
+                    
+                }
+                userQuery.FavoritedPlaylists = userQuery.FavoritedPlaylists.Trim()+","+aptDTO.PlaylistId.Trim();
+                _SP.SaveChanges();
+
+                return await _getPlayLists.GetAllPlayLists(aptDTO.UserToken);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

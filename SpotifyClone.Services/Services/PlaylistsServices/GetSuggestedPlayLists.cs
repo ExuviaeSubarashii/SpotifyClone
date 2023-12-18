@@ -18,27 +18,18 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             _SC = SC;
         }
 
-        public async Task<IEnumerable<SuggestedPlayListDTO>> GetAllAsync(string userToken)
+        public async Task<IEnumerable<SuggestedPlayListDTO>> GetAllAsync()
         {
             try
             {
-                List<SuggestedPlayListDTO> playlistDTOs = new List<SuggestedPlayListDTO>();
-
                 List<Playlist> playlists = await _SC.Playlists.ToListAsync();
                 Random rnd = new Random();
-                var randomPlaylists = playlists.OrderBy(x => rnd.Next()).Take(6).ToList();
-
-                foreach (var item in randomPlaylists)
+                var randomPlaylists = playlists.OrderBy(x => rnd.Next()).Take(6).Select(x=>new SuggestedPlayListDTO
                 {
-                    var result = new SuggestedPlayListDTO()
-                    {
-                        PlayListId = item.PlayListId,
-                        Title = item.PlayListTitle
-                    };
-                    playlistDTOs.Add(result);
-                }
-
-                return playlistDTOs;
+                    PlayListId=x.PlayListId,
+                    Title=x.PlayListTitle,
+                }).ToList();
+                return randomPlaylists;
             }
             catch (Exception)
             {
