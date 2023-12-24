@@ -20,18 +20,23 @@ namespace SpotifyClone.Services.Services.UserServices
         }
         public async Task<UserPropertiesDTO> UserPropertiesGetterByToken(string userTokenValue)
         {
+            
             try
             {
                 UserPropertiesDTO userPropertiesDTO = new();
 
                 var properties = await _SP.Users.Where(x => x.UserToken == userTokenValue).FirstOrDefaultAsync();
+                var followerCount = properties.Followers.Split(',').ToList();
+                var followingCount = properties.Following.Split(',').ToList();
+                followerCount.RemoveAll(item => item.Trim() == "");
+                followingCount.RemoveAll(item => item.Trim() == "");
                 if (properties != null)
                 {
                     userPropertiesDTO = new UserPropertiesDTO()
                     {
                         UserName = properties.UserName.Trim(),
-                        Followers = properties.Followers.Trim().Length,
-                        Following = properties.Following.Trim().Length,
+                        Followers = followerCount.Count,
+                        Following = followingCount.Count,
                         UserId = properties.Id
                     };
                     return userPropertiesDTO;
@@ -55,13 +60,17 @@ namespace SpotifyClone.Services.Services.UserServices
                 UserPropertiesDTO userPropertiesDTO = new();
 
                 var properties = await _SP.Users.Where(x => x.Id == followingOrNotDTO.CurrentlyViewedUserProfileId).FirstOrDefaultAsync();
+                var followerCount=properties.Followers.Split(',').ToList();
+                var followingCount=properties.Following.Split(',').ToList();
+                followerCount.RemoveAll(item => item.Trim() == "");
+                followingCount.RemoveAll(item => item.Trim() == "");
                 if (properties != null)
                 {
                     userPropertiesDTO = new UserPropertiesDTO()
                     {
                         UserName = properties.UserName.Trim(),
-                        Followers = properties.Followers.Trim().Length,
-                        Following = properties.Following.Trim().Length,
+                        Followers = followerCount.Count,
+                        Following = followingCount.Count,
                         UserId = properties.Id,
                         IsFollowing=await _followManager.IsFollowedOrNot(followingOrNotDTO.CurrentlyViewedUserProfileId,followingOrNotDTO.CurrentViewerUserToken)
                     };

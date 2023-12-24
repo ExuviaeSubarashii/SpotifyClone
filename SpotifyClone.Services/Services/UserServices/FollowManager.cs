@@ -51,7 +51,8 @@ namespace SpotifyClone.Services.Services.UserServices
                 {
                     return Enumerable.Empty<FollowsDTO>();
                 }
-                var followsListIds = user.Followers.Trim().Split(',');
+                var followsListIds = user.Followers.Trim().Split(',').Select(id=>id.Trim()).Where(id=>!string.IsNullOrEmpty(id));
+
                 var followsdto = await _SP.Users.Where(x => followsListIds.Contains(x.Id.ToString())).Select(x => new FollowsDTO
                 {
                     UserId = x.Id,

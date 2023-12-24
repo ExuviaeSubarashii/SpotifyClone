@@ -21,10 +21,6 @@ namespace SpotifyClone.API.Controllers
         private readonly FollowManager _followManager;
         private readonly UserProfileActions _userProfileActions;
         private readonly IConfiguration _config;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
-
         public UserController(SpotifyCloneContext SC, UserAuthentication authentication, GetSuggestedPlayLists playLists, IConfiguration configuration, UserProperties userProperties, FollowManager followManager, UserProfileActions userProfileActions)
         {
             _SC = SC;
@@ -52,45 +48,11 @@ namespace SpotifyClone.API.Controllers
 
             if (register != null)
             {
-                var doesUserExist = _SC.Users.Any(x => x.UserEmail == register.UserEmail);
-                if (!doesUserExist)
-                {
-                    var registerUser = new User()
-                    {
-                        UserEmail = register.UserEmail.Trim(),
-                        UserName = register.UserName.Trim(),
-                        Password = register.UserPassword.Trim(),
-                        Followers = "0",
-                        Following = "0",
-                        UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),
-                    };
-                    _SC.Users.Add(registerUser);
-                    _SC.SaveChanges();
-                    return Ok();
-                }
-                else
-                {
-                    return ValidationProblem();
-                }
+                return Ok(await _authentication.RegisterAsync(register));
             }
             else
             {
                 return BadRequest();
-            }
-
-
-        }
-        [HttpPost("AuthUser")]
-        public async Task<ActionResult> AuthUser(string userToken)
-        {
-
-            bool isAuthed = _authentication.IsAuthenticated(userToken);
-            if (isAuthed)
-                return Ok();
-            else
-            {
-
-                return NotFound();
             }
 
 
@@ -111,15 +73,12 @@ namespace SpotifyClone.API.Controllers
         [HttpPost("GetUserPropertiesById")]
         public async Task<ActionResult> GetUserPropertiesByIdd([FromBody] FollowingOrNotDTO fonDTO)
         {
-
             if (fonDTO != null)
             {
                 return Ok(await _userProperties.UserPropertiesGetterById(fonDTO));
             }
             else
             { return BadRequest(); }
-
-
         }
         [HttpPost("GetUserFollowings")]
         public async Task<ActionResult> GetUserFollowings([FromBody] FollowRequestDTO request)
@@ -180,42 +139,6 @@ namespace SpotifyClone.API.Controllers
         {
             return Ok(await _followManager.UnFollowUser(FTO));
         }
-        public string CreateToken(LoginDTO request)
-        {
-            List<Claim> claims = new List<Claim>();
-            {
-                _ = new Claim(ClaimTypes.Name, request.UserEmail, request.Password);
-            }
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: cred
-                );
-            var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwttoken;
-        }
-        public string CreateRegisterToken(string userName, string userEmail, string password)
-        {
-            List<Claim> claims = new List<Claim>();
-            {
-                _ = new Claim(ClaimTypes.Name, userName, userEmail, password);
-            }
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: cred
-                );
-            var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwttoken;
-        }
-
     }
 
 }

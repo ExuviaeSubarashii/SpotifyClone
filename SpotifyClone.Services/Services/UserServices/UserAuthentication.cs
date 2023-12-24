@@ -1,9 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 using SpotifyClone.Domain.Dtos;
 using SpotifyClone.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,27 +17,11 @@ namespace SpotifyClone.Services.Services.UserServices
     public class UserAuthentication
     {
         private readonly SpotifyCloneContext _SC;
+        private readonly IConfiguration _config;
+
         public UserAuthentication(SpotifyCloneContext SC)
         {
             _SC = SC;
-        }
-        public bool IsAuthenticated(string userToken)
-        {
-            try
-            {
-                var query = _SC.Users.Where(x => x.UserToken == userToken).Any();
-                if (query)
-                {
-                    return true;
-                }
-                else { return false; }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            
         }
         public async Task<UserDTO> LoginWithEmailAsync(LoginDTO loginDTO)
         {
@@ -62,7 +51,45 @@ namespace SpotifyClone.Services.Services.UserServices
 
                 throw;
             }
-           
+
+        }
+        public async Task<string> RegisterAsync(RegisterDTO register)
+        {
+            var doesUserExist = await _SC.Users.AnyAsync(x => x.UserEmail == register.UserEmail);
+            if (doesUserExist)
+            {
+                return "Cannot Create Account";
+            }
+            var registerUser = new User()
+            {
+                UserEmail = register.UserEmail.Trim(),
+                UserName = register.UserName.Trim(),
+                Password = register.UserPassword.Trim(),
+                Followers = "",
+                Following = "",
+                UserToken = CreateRegisterToken(register.UserName, register.UserEmail, register.UserPassword),
+            };
+            _SC.Users.Add(registerUser);
+            _SC.SaveChanges();
+            return "Successfully Created Account";
+        }
+        public string CreateRegisterToken(string userName, string userEmail, string password)
+        {
+            List<Claim> claims = new List<Claim>();
+            {
+                _ = new Claim(ClaimTypes.Name, userName, userEmail, password);
+            }
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("BMNIGKHITKGSGITRPJKGJMEISNF"));
+
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: cred
+                );
+            var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwttoken;
         }
     }
 }

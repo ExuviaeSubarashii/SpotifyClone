@@ -21,7 +21,7 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
             try
             {
                 var user = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
-                if (user == null)
+                if (string.IsNullOrEmpty(user.FavoritedPlaylists))
                 {
                     return Enumerable.Empty<PlaylistDTO>();
                 }
@@ -193,8 +193,38 @@ namespace SpotifyClone.Services.Services.PlaylistsServices
         {
             try
             {
-                var userQuery = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
-                if (userQuery.FavoritedPlaylists.Trim().Split(',').Contains(playListId))
+                if (!string.IsNullOrEmpty(userToken))
+                {
+                    var userQuery = await _SC.Users.FirstOrDefaultAsync(x => x.UserToken == userToken);
+                    if (!string.IsNullOrEmpty(userQuery.FavoritedPlaylists))
+                    {
+                        var splittedQuery = userQuery.FavoritedPlaylists.Trim().Split(',').Contains(playListId);
+                        if (!splittedQuery)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<bool> GetThePlaylistOwner(GetPlaylistOwnerDTO gpDTO)
+        {
+            try
+            {
+                var playlistQuery = await _SC.Playlists.Where(x => x.PlayListId == gpDTO.PlaylistId).FirstOrDefaultAsync();
+                if (playlistQuery.PlayListOwner == gpDTO.CurrentUserId)
                 {
                     return true;
                 }

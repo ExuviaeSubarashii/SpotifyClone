@@ -117,5 +117,10 @@ namespace SpotifyClone.API.Controllers
         {
             return Ok(await _playlistHandler.AddToFavorites(aptDTO));
         }
+        [HttpPost("GetPlaylistOwner")]
+        public async Task<ActionResult> GetPlaylistOwner([FromBody] GetPlaylistOwnerDTO gpDTO)
+        {
+            return Ok(await _allplayLists.GetThePlaylistOwner(gpDTO));
+        }
     }
 }
